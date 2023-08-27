@@ -1,0 +1,108 @@
+{% extends 'exam/adminbase.html' %}
+{% block content %}
+{%load static%}
+
+<head>
+  <script> 
+    //Cuadro de diálogo de confirmación en JavaScript
+    function confirmarAccesoURL()
+    {
+  return confirm("¿Está seguro que desea eliminar?");
+    }
+  </script>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  
+
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    h6 {
+      text-align: center;
+    }
+
+    .row {
+      margin: 100px;
+    }
+  </style>
+</head>
+<br><br>
+<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">Preguntas</h6>
+    </div>
+    <table class="table table-hover table-bordered" id="dev-table">
+      <thead>
+        <tr>
+
+          <th>Preguntas MCQ</th>
+         
+          <th>Valor</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      {% for c in questions %}
+       
+      <tr>
+
+        <td> {{c.question}}</td>
+        
+        
+        <td>{{c.marks}}</td>
+        <td><a class="btn btn-success btn-xs" style="border-radius: 0%;" href="{% url 'update-question' c.id  %}"></a> <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'delete-question' c.id  %}" onclick="return confirmarAccesoURL()"><span class="glyphicon glyphicon-trash"></span></a></td>
+        
+      </tr>
+      {% endfor %}
+      <tr>
+
+        <th>Preguntas Respuesta corta</th>
+       
+        <th>Valor</th>
+        <th>Accion</th>
+      </tr>
+    </thead>
+    {% for c in questions1 %}
+     
+    <tr>
+
+      <td> {{c.question1}}</td>
+      
+      
+      <td>{{c.marks}}</td>
+      <td><a class="btn btn-success btn-xs" style="border-radius: 0%;" href="{% url 'update-question1' c.id  %}"></a> <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'delete-question1' c.id  %}" onclick="return confirmarAccesoURL()"><span class="glyphicon glyphicon-trash"></span></a></td>
+      
+    </tr>
+    {% endfor %}
+    <tr>
+
+      <th>Preguntas VoF</th>
+     
+      <th>Valor</th>
+      <th>Accion</th>
+    </tr>
+  </thead>
+  {% for c in questions2 %}
+   
+  <tr>
+
+    <td> {{c.question2}}</td>
+    
+    
+    <td>{{c.marks}}</td>
+    <td><a class="btn btn-success btn-xs" style="border-radius: 0%;" href="{% url 'update-question2' c.id  %}"></a> <a class="btn btn-danger btn-xs" style="border-radius: 0%;" href="{% url 'delete-question2' c.id  %}" onclick="return confirmarAccesoURL()"><span class="glyphicon glyphicon-trash"></span></a></td>
+    
+  </tr>
+  {% endfor %}
+  
+    
+
+    </table>
+  </div>
+</div>
+
+<br><br><br><br><br><br>
+{% endblock content %}

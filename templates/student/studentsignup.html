@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+{% load widget_tweaks %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <style>
+
+        form{
+           margin: 50px; 
+          
+        }
+
+    </style>
+  </head>
+  <body>
+    {% include "exam/navbar.html" %}
+ 
+
+
+<br><br><br>
+<div class="container">
+  <h3 style="text-align: center;">Formulario de registro de egresado</h3>
+<form method="POST" autocomplete="off" enctype="multipart/form-data" onsubmit="return SalvarDatos()">
+    {% csrf_token %}
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="first_name">Primer nombre</label>
+          <input type="text">{% render_field userForm.first_name|attr:'required:true'  class="form-control" placeholder="Primer nombre" id="nombre" %}
+        </div>
+        <div class="form-group col-md-6">
+          <label for="last_name">Apellido</label>
+          {% render_field userForm.last_name|attr:'required:true'  class="form-control" placeholder="Apellido" id="apellido"%}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="mobile">Contacto</label>
+          {% render_field studentForm.mobile|attr:'required:true'  class="form-control" placeholder="Numero de contacto" %}
+        </div>
+        <div class="form-group col-md-6">
+          <label for="address">Dirección</label>
+          {% render_field studentForm.address|attr:'required:true'  class="form-control" placeholder="Dirección" %}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="username">Username</label>
+          {% render_field userForm.username|attr:'required:true'  class="form-control" placeholder="username" %}
+        </div>
+        <div class="form-group col-md-6">
+          <label for="inputPassword4">Password</label>
+          {% render_field userForm.password|attr:'required:true'  class="form-control" placeholder="password" %}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="profile_pic">Foto de perfil</label>
+          {% render_field studentForm.profile_pic|attr:'required:true' class="form-control" placeholder="" %}
+        </div>
+        
+      </div>
+
+
+    <button type="submit" class="btn btn-success" style="border-radius: 0%;">Registrarse</button>
+  </form>
+</div>
+
+
+<br><br>
+{% include "exam/footer.html" %}
+<script>
+  
+function SalvarDatos() {
+    let nombre = document.getElementById("nombre").value
+    let apellido = document.getElementById("apellido").value;
+    let user = document.getElementById("usuario").value;
+    let correo = document.getElementById("email").value;
+    let contra = document.getElementById("pass").value;
+    let recontra = document.getElementById("repass").value;
+    let error = "";
+    //Validacion nombre
+    if (nombre.length != 0) {
+        let auxiliar = nombre.split(" ");
+        let caracter = "";
+        for (let i = 0; i < auxiliar.length; i++) {
+            caracter = auxiliar[i].charAt(0);
+            if (caracter != caracter.toUpperCase()) {
+                error += "el nombre no comienza en mayuscula \n";
+                break;
+            }
+            else if (/^([0-9])*$/.test(caracter)) {
+                alert("El cmapo nombre solo puede tener letras");
+                break;
+            }
+        }
+    } else {
+        error += "El campo nombre es obligatorio \n";
+    }
+    //Validacion apellido
+    if (apellido.length != 0) {
+        let caracter1 = "";
+        let auxiliar1 = nombre.split(" ");
+        for (let i = 0; i < auxiliar1.length; i++) {
+            caracter1 = auxiliar1[i].charAt(0);
+            if (caracter1 != caracter1.toUpperCase()) {
+                error += "el apellido no comienza en mayuscula \n";
+                break;
+            }
+            else if (/^([0-9])*$/.test(caracter1)) {
+                alert("El cmapo apellido solo puede tener letras");
+                break;
+            }
+        }
+    } else {
+        error += "El campo apellido es obligatorio \n";
+    }
+    if (user.length == 0 ||correo == 0 || contra == 0 || recontra == 0)  {
+        error+="Existen campos vacios\n";
+    }
+               if (contra.length < 8) {
+                   error+="La contrasenna debe tener al menos 8 caracteres\n";
+               }
+if (contra != recontra) {
+    error+="Las contrasennas deben ser iguales\n";
+}
+    if (error != "") {
+        alert(error);
+        return false;
+    }
+    alert("Formulario Válido");
+    return true;
+}
+</script>
+  </body>
+</html>
