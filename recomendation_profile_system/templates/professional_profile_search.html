@@ -1,0 +1,226 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+{% block content %}
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              id="bootstrap-css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    </head>
+    <div class="row">
+        <div class="col-12 justify-content-center mb-4">
+            <h1 class="text-center">Buscar un Perfil Profesional</h1>
+            <h4 class="text-center">
+                Para seleccionar un perfil proesional debe seleccionar las competencias y el nivel de cada una de ellas.
+            </h4>
+            <br>
+            <div class="col-sm-10 col-md-4 justify-content-center mx-auto">
+                <h6 class="mb-2 mx-3">
+                    Competencias:
+                </h6>
+                <div id="competencias" class="mb-3 justify-content-center">
+                    <div id="group_0" class="d-inline-flex group m-1 col-12 text-center justify-content-center">
+                        <select id="competencias_list_0" class="form-select mr-2" aria-label="Default select example"
+                                style="max-width: max-content; min-width: 200px">
+                        </select>
+                        <input type="number" name="level_0" id="level_0" class="form-control mx-2"
+                               style="max-width: 150px; min-width: 70px"
+                               title="Los niveles son: Bajo menor 30, Medio entre 31 y 60, Alto más de 60"
+                               oninput="javascript:if (this.value>100 || this.value < 0) this.value = this.value.slice(0,this.value.length-1);
+                                                    if (this.value.length>this.maxLength) this.value=this.value.slice(0,this.maxLength);"
+                               maxlength="3"
+                        placeholder="Nivel">
+                        <button class="cancel_btn btn btn-outline-primary" id="0"><i class="fas fa-remove"></i></button>
+                    </div>
+                </div>
+                <div id="error">
+
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-outline-secondary mx-2" id="add_competencia"><i class="fas fa-plus"></i>
+                    </button>
+                    <button class="btn btn-primary " id="search">Buscar Perfil</button>
+                    <script src="{% static 'src/js/jquery.min.js' %}"></script>
+
+                </div>
+            </div>
+        </div>
+        <div id="preloader" class="text-center">
+            <div class="spinner-border text-secondary" role="status">
+            </div>
+        </div>
+        <div id="response">
+
+        </div>
+
+    </div>
+
+    <script>
+        (function () {
+            let cont = 1
+            let cant_real = 1
+            let list_competencias = document.getElementById('competencias_list_0');
+            let html_select_values = ''
+            let error = []
+            {% for competencia in competencias %}
+                html_select_values += '<option value = "{{ competencia.id }}" >{{ competencia.course_name }}</option>';
+            {% endfor %}
+            list_competencias.innerHTML = html_select_values;
+            document.getElementById('add_competencia').addEventListener("click", (e) => {
+                let html_select_values = ''
+                {% for competencia in competencias %}
+                    html_select_values += '<option value = "{{ competencia.id }}" >{{ competencia.course_name }}</option>';
+                {% endfor %}
+                P = ''
+                text = '<div id="group_' + cont + '" class="d-inline-flex group m-1 col-12 text-center justify-content-center"> <select style="max-width: max-content;min-width: 200px" id="competencias_list_' + cont + '" class="form-select mr-2">' + html_select_values + '</select> <input class="form-control mx-2" style="max-width: 150px;min-width: 70px" placeholder="Nivel" oninput="javascript:if (this.value>100 || this.value < 0) this.value = this.value.slice(0,this.value.length-1);if (this.value.length>this.maxLength) this.value=this.value.slice(0,this.maxLength);" maxlength="3" type="number" name="level_' + cont + '" id="level_' + cont + '" title="Los niveles son: Bajo menor 30, Medio entre 31 y 60, Alto más de 60"> <button class="cancel_btn btn btn-outline-primary" id="' + cont + '"><i class="fas fa-remove"></i></button> </div>';
+                cont++;
+                if (cant_real <{{ competencias_count }}) {
+                    $("#error").html('')
+                    cant_real++;
+                    $('#competencias').append(text);
+                } else {
+                    error = []
+                    error.push('Solo existen ' + '{{ competencias_count }}' + ' competencias. ')
+                    let errors = '<div class="alert alert-danger" role="alert">'
+                    for (let err of error) {
+                        errors += '<div>' + err + '</div>'
+                    }
+                    errors += '</div>';
+                    $("#error").html(errors)
+                }
+            });
+
+            function hide_preload() {
+                $("#preloader").hide();
+                console.log('no')
+            }
+
+            function show_preload() {
+                $("#preloader").show();
+                console.log('si')
+            }
+
+            hide_preload()
+            $('#competencias').on('click', '.cancel_btn', (e) => {
+                if (e.target.nodeName.toLowerCase() == 'button' || e.target.nodeName.toLowerCase() == 'i') {
+                    let number = 'group_' + e.target.id;
+                    document.getElementById(number).remove();
+                    cant_real--;
+                }
+            })
+
+            function validations() {
+                //valida si los campos son vacíos
+                s = $("#competencias>div>input");
+                for (let i = 0; i < s.length; i++) {
+                    if (s[i].value == '') {
+                        error.push("Existen campos vacíos.")
+                        return false
+                    }
+                }
+                //valida que no hayan competencias repetidas
+                s = $("#competencias>div>select");
+                ids = []
+                for (let i = 0; i < s.length; i++) {
+                    ids.push(s[i].value)
+                }
+                ids.sort()
+                for (let i = 0; i < ids.length; i++) {
+                    for (let j = i + 1; j < ids.length; j++) {
+                        if (ids[i] == ids[j]) {
+                            error.push("Existen competencias repetidas.")
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            $('#search').on('click', (e) => {
+                error = []
+                $("#error").html('')
+
+                if (validations()) {
+                    let competencia_list = []
+                    w = document.getElementsByClassName('group');
+                    for (const wElement of w) {
+                        dict = {
+                            'competencia_id': wElement.getElementsByTagName("select")[0].value,
+                            'number': wElement.getElementsByTagName("input")[0].value
+                        }
+                        competencia_list.push(dict)
+                    }
+                    show_preload();
+                    $.ajax({
+                        url: '{% url 'search_recommendation_profile' %}',
+                        type: "post",
+                        data: {'competencias[]': JSON.stringify(competencia_list)},
+                        dataType: 'json',
+                        success: (data) => {
+                            hide_preload();
+                            print_profile(data);
+                        },
+                        errors: (data) => {
+                            hide_preload();
+                        }
+                    })
+                } else {
+
+                    $("#response").html('');
+                    let errors = '<div class="alert alert-danger" role="alert">'
+                    for (let err of error) {
+                        errors += '<div>' + err + '</div>'
+                    }
+                    errors += '</div>';
+                    console.log(error)
+                    $("#error").html(errors)
+                }
+            })
+        }());
+
+
+        function print_profile(data) {
+            let html_response = '';
+            let table_content_rows = ''
+            for (const datum of data) {
+                let jsonStudent = JSON.parse(datum['student']);
+                console.log(jsonStudent)
+                let jsonUser = JSON.parse(datum['user']);
+                console.log(jsonUser)
+
+                table_content_rows += `
+      <tr>
+        <td> <img src="/static/` + jsonStudent[0]['fields']['profile_pic'] + `" alt="Profile Pic" height="40px" width="40px" /></td>
+        <td> ` + jsonUser[0]['fields']['first_name'] + " " + jsonUser[0]['fields']['last_name'] + `</td>
+        <td>` + jsonStudent[0]['fields']['mobile'] + `</td>
+      </tr>
+                `;
+
+
+            }
+            html_response = `<div class="container">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h6 class="panel-title">Perfiles recomendados</h6>
+    </div>
+    <table class="table table-hover table-bordered" id="dev-table">
+      <thead>
+        <tr>
+
+          <th>Foto</th>
+          <th>Nombre y apellidos</th>
+
+
+          <th>Móvil</th>
+
+        </tr>
+      </thead>
+      ` + table_content_rows + `
+    </table>
+  </div>
+</div>`
+            $("#response").html(html_response);
+        }
+
+    </script>
+{% endblock %}

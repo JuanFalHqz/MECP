@@ -15,7 +15,7 @@ from exam import models
 #for showing signup/login button for teacher
 def teacherclick_view(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect('afterlogin')
+        return HttpResponseRedirect('teacher-dashboard')
     return render(request,'teacher/teacherclick.html')
 
 def teacher_signup_view(request):
