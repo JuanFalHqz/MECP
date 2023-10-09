@@ -1,0 +1,138 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+{% block content %}
+    <head>
+        <style>
+            label > strong {
+                color: #3a3b45;
+            }
+
+            .error {
+                color: rgba(255, 24, 24, 0.78);
+            }
+        </style>
+    </head>
+    <div class="justify-content-center col-md-6 col-sm-4 m-auto">
+        <h2 style="text-align:center;">Modificar Oferta Profesional</h2>
+        <form>
+            <div class="mb-3">
+                <label class="form-label" for="title">
+                    <strong>Título</strong>
+                </label>
+                <input class="form-control" type="text" id="title" placeholder="Desarrollador backend java"
+                       name="title" required value="{{ job_offer.title }}">
+                <div class="error" id="title-error">
+
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="address">
+                    <strong>Dirección</strong>
+                </label>
+                <input class="form-control" type="text" id="address" placeholder="Sunset Blvd, 38" name="address"
+                       required value="{{ job_offer.address }}">
+                <div class="error" id="address-error">
+
+                </div>
+            </div>
+            <div class="dropdown bootstrap-select show-tick form-control mb-3">
+                <label class="form-label" for="abilities">
+                    <strong>Habilidades</strong>
+                </label>
+                <select id="select-abilities" class="selectpicker" multiple="" aria-label="Default select example"
+                        data-live-search="true"
+                        name="abilities" id="abilities"
+                        tabindex="null"
+                        required>
+                    {% for ability in abilities %}
+                        <option value="{{ ability.pk }}">{{ ability }}</option>
+                    {% endfor %}
+                </select>
+                <div class="error" id="abilities-error">
+
+                </div>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-primary" id="btn-update-job-offer" type="button">Modificar</button>
+            </div>
+        </form>
+    </div>
+
+
+    <script>
+        //validations.
+        function title_is_valid() {
+            if ($('#title').val().trim() == '') {
+                $('#title-error').text("Escriba el título");
+                return false;
+            }
+            $('#title-error').text("");
+            return true
+        }
+
+        function address_is_valid() {
+            if ($('#address').val().trim() == '') {
+                $('#address-error').text("Escriba la dirección");
+                return false;
+            }
+            $('#address-error').text("");
+            return true
+        }
+
+        function abilities_is_valid() {
+            if ($('.filter-option-inner-inner').text() == 'Seleccione al menos una habilidad') {
+                $('#abilities-error').text("Seleccione al menos una habilidad");
+                return false;
+            }
+            $('#abilities-error').text("");
+            return true
+        }
+
+        function all_is_valid() {
+            let a = title_is_valid()
+            let b = address_is_valid()
+            let c = abilities_is_valid()
+            return a && b && c;
+        }
+
+        function load_select() {
+            //cargar los datos del select
+            let select = document.querySelector('#select-abilities');
+            let options = Array.from(select.options)
+            {% for ability in abilities_select %}
+                options.find(i => i.text === '{{ ability }}').selected = true;
+            {% endfor %}
+
+        }
+
+        load_select()
+        // Guarda la oferta de trabajo si es válida la enrada.
+        $('#btn-update-job-offer').on('click', () => {
+            if (all_is_valid()) {
+
+                let title = $('#title').val().trim();
+                let address = $('#address').val().trim();
+                let abilities = $("#select-abilities").val();
+                let datas = {'pk':{{ job_offer.pk }}, 'title': title, 'address': address, 'abilities': abilities}
+                console.log(datas)
+                $.ajax({
+                    url: '{{ root }}',
+                    type: "post",
+                    data: datas,
+                    dataType: 'json',
+                    success: (data) => {
+                        window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
+                    },
+                    error: (data) => {
+                        alert(data);
+                    }
+                })
+            }
+        })
+
+        // renderizado de componentes
+        document.addEventListener('readystatechange', () => {
+            $('.dropdown').addClass('form-control');
+        })
+    </script>
+{% endblock %}

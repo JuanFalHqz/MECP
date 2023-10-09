@@ -23,6 +23,6 @@ urlpatterns = [
     path('see-question/<int:pk>', views.see_question_view, name='see-question'),
     path('remove-question/<int:pk>', views.remove_question_view, name='remove-question'),
 
-    path('search_professional_profile/', include('recomendation_profile_system.urls')),
+    path('manage_job/', include('recomendation_profile_system.urls')),
 
 ]

@@ -1,0 +1,84 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-sm-8 col-md-10 m-auto">
+        <div class="card shadow">
+            <div class="card-header">
+                <h2 style="text-align:center;">Listado de Perfiles Profesionales</h2>
+            </div>
+            <div class="card-body">
+                {% for datum in data %}
+                    <div class="row ">
+                        <table id="example" class="table table-striped mx-auto" style="width:95%; margin-bottom: 25px;">
+                            <thead>
+                            <div style="margin-left: 2%">
+                                <h4>
+                                    Oferta profesional: <a
+                                        href="{% url 'detail_job_offer_root' datum.offer.id %}">{{ datum.offer.title }}</a>
+                                </h4>
+                                {{ datum.offer.address }}.
+                                {% for ability in datum.offer.abilities.all %}
+                                    {{ ability }}
+                                {% endfor %}
+
+                                <h6>
+                                    Resultados con umbral de {{ umbral }}%
+                                </h6>
+                            </div>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Dirección</th>
+                                <th>Móvil</th>
+                                <th>Habilidades</th>
+                                <th>Similitud</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for profile in datum.profiles %}
+                                <tr>
+                                    <td>
+                                        <img src="{% static profile.profile.profile_pic %}" width="25" height="25">
+                                    </td>
+                                    <td>
+                                        {{ profile.profile.get_name }}
+                                    </td>
+                                    <td>
+                                        {{ profile.profile.address }}
+                                    </td>
+                                    <td>
+                                        {{ profile.profile.mobile }}
+                                    </td>
+                                    <td>
+                                        {% for ability in profile.profile.abilities.all %}
+                                            {{ ability }}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if profile.similarity >= 95 %}
+                                            <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
+                                        {% elif profile.similarity < 95 and profile.similarity > 80 %}
+                                            <span class="float-right badge bg-info">{{ profile.similarity }} %</span>
+                                        {% elif profile.similarity <= 80 and profile.similarity > 60 %}
+                                            <span class="float-right badge bg-success">{{ profile.similarity }} %</span>
+                                        {% elif profile.similarity <= 60 and profile.similarity > 50 %}
+                                            <span class="float-right badge bg-warning">{{ profile.similarity }} %</span>
+                                        {% elif profile.similarity <= 50 %}
+                                            <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <script>
+                        </script>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -28,7 +28,7 @@ def student_signup_view(request):
             user.set_password(user.password)
             user.save()
             student=studentForm.save(commit=False)
-            student.user=user
+            student.teacher=user
             student.save()
             my_student_group = Group.objects.get_or_create(name='STUDENT')
             my_student_group[0].user_set.add(user)

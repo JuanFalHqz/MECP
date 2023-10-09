@@ -1,7 +1,7 @@
-asgiref==3.2.7
-Django==3.0.5
-django-widget-tweaks==1.4.8
-pytz==2020.1
-sqlparse==0.3.1
+asgiref
+Django~=4.2.5
+django-widget-tweaks
+pytz
+sqlparse
 Pillow
-
+sklearn~=0.0.post9

@@ -283,3 +283,10 @@ fabric.properties
 # Azure Toolkit for IntelliJ plugin
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
+
+# Migrations
+exam/migrations
+recomendation_content_system/migrations
+recomendation_profile_system/migrations
+student/migrations
+teacher/migrations

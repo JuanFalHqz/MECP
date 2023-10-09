@@ -3,182 +3,188 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
- 
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'src/js/bootstrap-select.min.js' %}"></script>
+    <style media="screen">
+        a:link {
+            text-decoration: none;
+        }
 
-  <style media="screen">
-    a:link {
-      text-decoration: none;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Gill Sans", sans-serif;;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Gill Sans", sans-serif;;
-    }
+        header {
+            position: fixed;
+            background: #22242A;
+            padding: 20px;
+            width: 100%;
+            z-index: 1;
+        }
 
-    header {
-      position: fixed;
-      background: #22242A;
-      padding: 20px;
-      width: 100%;
-      z-index: 1;
-    }
+        .left_area h3 {
+            color: #fff;
+            margin: 0px;
+            text-transform: uppercase;
+            font-size: 22px;
+            font-weight: 900;
+        }
 
-    .left_area h3 {
-      color: #fff;
-      margin: 0px;
-      text-transform: uppercase;
-      font-size: 22px;
-      font-weight: 900;
-    }
+        .left_area span {
+            color: #19B3D3;
+        }
 
-    .left_area span {
-      color: #19B3D3;
-    }
+        .logout_btn {
+            padding: 5px;
+            background: #ef5350;
+            text-decoration: none;
+            float: right;
+            margin-top: -30px;
+            margin-right: 40px;
+            border-radius: 2px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            transition: 0.5s;
 
-    .logout_btn {
-      padding: 5px;
-      background:#ef5350;
-      text-decoration: none;
-      float: right;
-      margin-top: -30px;
-      margin-right: 40px;
-      border-radius: 2px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-      transition: 0.5s;
+        }
 
-    }
+        .logout_btn:hover {
+            background: #bb403e;
+        }
 
-    .logout_btn:hover {
-      background: #bb403e;
-    }
+        .sidebar {
+            background: #2f323a;
+            margin-top: 70px;
+            padding-top: 30px;
+            position: fixed;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            transition: 0.5s;
+            transition-property: left;
+        }
 
-    .sidebar {
-      background: #2f323a;
-      margin-top: 70px;
-      padding-top: 30px;
-      position: fixed;
-      left: 0;
-      width: 250px;
-      height: 100%;
-      transition: 0.5s;
-      transition-property: left;
-    }
+        .sidebar .profile_image {
+            width: 100px;
+            height: 100px;
+            border-radius: 100px;
+            margin-bottom: 10px;
+        }
 
-    .sidebar .profile_image {
-      width: 100px;
-      height: 100px;
-      border-radius: 100px;
-      margin-bottom: 10px;
-    }
+        .sidebar h4 {
+            color: #ccc;
+            margin-top: 0;
 
-    .sidebar h4 {
-      color: #ccc;
-      margin-top: 0;
-      
-    }
+        }
 
-    .sidebar a {
-      color: #fff;
-      display: block;
-      width: 100%;
-      line-height: 60px;
-      text-decoration: none;
-      padding-left: 40px;
-      box-sizing: border-box;
-      transition: 0.5s;
+        .sidebar a {
+            color: #fff;
+            display: block;
+            width: 100%;
+            line-height: 60px;
+            text-decoration: none;
+            padding-left: 40px;
+            box-sizing: border-box;
+            transition: 0.5s;
 
-    }
+        }
 
-    .sidebar a:hover {
-      background:  #969696;
-      color:white;
-    }
+        .sidebar a:hover {
+            background: #969696;
+            color: white;
+        }
 
-    .sidebar i {
-      padding-right: 10px;
-    }
+        .sidebar i {
+            padding-right: 10px;
+        }
 
-    label #sidebar_btn {
-      z-index: 1;
-      color: #fff;
-      position: fixed;
-      cursor: pointer;
-      left: 300px;
-      font-size: 20px;
-      margin: 5px 0;
-      transition: 0.5s;
-      transition-property: color;
-    }
+        label #sidebar_btn {
+            z-index: 1;
+            color: #fff;
+            position: fixed;
+            cursor: pointer;
+            left: 300px;
+            font-size: 20px;
+            margin: 5px 0;
+            transition: 0.5s;
+            transition-property: color;
+        }
 
-    label #sidebar_btn:hover {
-      color: #575757;
-    }
+        label #sidebar_btn:hover {
+            color: #575757;
+        }
 
-    #check:checked~.sidebar {
-      left: -190px;
-    }
+        #check:checked ~ .sidebar {
+            left: -190px;
+        }
 
-    #check:checked~.sidebar a span {
-      display: none;
-    }
+        #check:checked ~ .sidebar a span {
+            display: none;
+        }
 
-    #check:checked~.sidebar a {
-      font-size: 20px;
-      margin-left: 170px;
-      width: 80px;
-    }
+        #check:checked ~ .sidebar a {
+            font-size: 20px;
+            margin-left: 170px;
+            width: 80px;
+        }
 
-    .content {
-      margin-left: 250px;
-      background: url(background.png) no-repeat;
-      background-position: center;
-      background-size: cover;
-      height: 100vh;
-      transition: 0.5s;
-    }
+        .content {
+            margin-left: 250px;
+            background: url(background.png) no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 100vh;
+            transition: 0.5s;
+        }
 
-    #check:checked~.content {
-      margin-left: 60px;
-    }
+        #check:checked ~ .content {
+            margin-left: 60px;
+        }
 
-    #check {
-      display: none;
-    }
-  </style>
+        #check {
+            display: none;
+        }
+    </style>
 
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+    {% block head %}
 
+    {% endblock %}
 
 </head>
 
 <body>
 
-  <input type="checkbox" id="check">
-  <!--header area start-->
-  <header>
+<input type="checkbox" id="check">
+<!--header area start-->
+<header>
     <label for="check">
-      <i style="left: 200px;margin-top: 17px;"class="fas fa-bars" id="sidebar_btn"></i>
+        <i style="left: 200px;margin-top: 17px;" class="fas fa-bars" id="sidebar_btn"></i>
     </label>
     <div class="left_area">
-      <h3>M-E-C-P</h3>
+        <h3>M-E-C-P</h3>
     </div>
     <div class="right_area">
-      <a href="/logout" class="logout_btn">Salir</a>
+        <a href="/logout" class="logout_btn">Salir</a>
     </div>
-  </header>
-  <!--header area end-->
-  <!--sidebar start-->
-  <div class="sidebar">
+</header>
+<!--header area end-->
+<!--sidebar start-->
+<div class="sidebar">
     <center>
 
-      <img src="{% static "image/teacher.png" %}" class="profile_image" alt="">
-      <h4>{{request.user.first_name}}</h4>
-      <h6 style="color: rgb(255, 255, 255);">( Empleador )</h6>
+        <img src="{% static "image/teacher.png" %}" class="profile_image" alt="">
+        <h4>{{ request.user.first_name }}</h4>
+        <h6 style="color: rgb(255, 255, 255);">( Empleador )</h6>
 
     </center>
 
@@ -186,15 +192,18 @@
     <a href="/teacher/teacher-exam"><i class="fas fa-book"></i><span>Administrar competencias</span></a>
     <a href="/teacher/teacher-question"><i class="fas fa-question-circle"></i><span>Administrar preguntas</span></a>
     <a href="{% url 'teacher-student' %}"><i class="fas fa-sort-numeric-up"></i><span> Notas</span></a>
-    <a href="{% url 'SearchRecommendationProfile' %}"><i class="fas fa-sort-numeric-up"></i><span> Buscar Perfil Profesional</span></a>
+    <a href="{% url 'list_job_offers_root' %}"><i class="fas fa-list"></i><span> Listar Ofertas</span></a>
+    <a href="{% url 'add_job_offer_root' %}"><i class="fas fa-plus"></i><span> Añadir Oferta</span></a>
+    <a href="{% url 'list_profiles_root' %}"><i class="fas fa-list"></i><span> Perfiles Profesionales</span></a>
+    <a href="{% url 'settings_root' 1 %}"><i class="fas fa-cog"></i><span> Ajustes</span></a>
 
 
-  </div>
-  <!--sidebar end-->
+</div>
+<!--sidebar end-->
 
 
-  <!--content start-->
-  <div class="content">
+<!--content start-->
+<div class="content">
     <br><br><br><br><br>
     {% block content %}
 
@@ -203,8 +212,11 @@
 
     <br><br><br>
     {% include "exam/footer.html" %}
-  </div>
-  <!--content end-->
+</div>
+<!--content end-->
+{% block javaScript %}
+
+{% endblock %}
 </body>
 
 </html>

@@ -3,6 +3,7 @@ import time
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
@@ -22,13 +23,14 @@ from django.core import serializers
 # 5 Selecionar el o los x mayores valores de la suma en el paso anterior.
 
 class SearchRecommendationProfile(TemplateView):
-    template_name = 'professional_profile_search.html'
-
+    template_name = 'professional_profile_add.html'
+    def get_context_data(self, **kwargs):
+        return
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         context['competencias'] = list(Course.objects.all().values('id', 'course_name'))
         context['competencias_count'] = Course.objects.all().count()
-        return self.render_to_response(context)
+        return render(request,template_name,context)
 
 
 @method_decorator(csrf_exempt)
