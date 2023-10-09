@@ -5,3 +5,4 @@ pytz
 sqlparse
 Pillow
 sklearn~=0.0.post9
+scikit-learn
