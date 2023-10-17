@@ -16,6 +16,7 @@ class SettingsForm(ModelForm):
 
     class Meta:
         model = Settings
-        fields = '__all__'
+        fields = ('cant_element_to_show','relevance_umbral')
+
 
 

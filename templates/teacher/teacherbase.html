@@ -10,6 +10,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'src/js/bootstrap-select.min.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'libs/toaster/css/bootstrap-toaster.css' %}">
+
     <style media="screen">
         a:link {
             text-decoration: none;
@@ -192,19 +195,22 @@
     <a href="/teacher/teacher-exam"><i class="fas fa-book"></i><span>Administrar competencias</span></a>
     <a href="/teacher/teacher-question"><i class="fas fa-question-circle"></i><span>Administrar preguntas</span></a>
     <a href="{% url 'teacher-student' %}"><i class="fas fa-sort-numeric-up"></i><span> Notas</span></a>
+    <div class="text-center" style="color: white; font-weight: bold"> Ofertas profesionales</div>
     <a href="{% url 'list_job_offers_root' %}"><i class="fas fa-list"></i><span> Listar Ofertas</span></a>
     <a href="{% url 'add_job_offer_root' %}"><i class="fas fa-plus"></i><span> Añadir Oferta</span></a>
     <a href="{% url 'list_profiles_root' %}"><i class="fas fa-list"></i><span> Perfiles Profesionales</span></a>
-    <a href="{% url 'settings_root' 1 %}"><i class="fas fa-cog"></i><span> Ajustes</span></a>
+    <a href="{% url 'settings_root' request.user.settings.pk %}"><i class="fas fa-cog"></i><span> Ajustes</span></a>
 
 
 </div>
+
 <!--sidebar end-->
 
 
 <!--content start-->
 <div class="content">
     <br><br><br><br><br>
+    <script src="{% static 'libs/toaster/js/bootstrap-toaster.js' %}"></script>
     {% block content %}
 
     {% endblock content %}
@@ -214,6 +220,7 @@
     {% include "exam/footer.html" %}
 </div>
 <!--content end-->
+
 {% block javaScript %}
 
 {% endblock %}

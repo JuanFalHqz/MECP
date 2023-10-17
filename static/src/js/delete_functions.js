@@ -29,51 +29,85 @@ $("#btn-all-delete").click((e) => {
     if (ids.length == 0) {
         alert('Seleccione los elementos a borrar.');
     } else {
-        if (confirm("Desea eliminar realmente " + ids.length + " ofertas profesionales.")) {
-            let url = $("#btn-all-delete").val();
-            $.ajax({
-                url: url,
-                type: 'get',
-                data: {'list_id[]': ids},
-                dataType: 'json',
-                success: (data) => {
-                    console.log(data)
-                    if (data.deleted) {
-                        $("#modal-delete").modal('hide');
-                        ids.forEach((value) => {
-                            console.log('value:' + value)
-                            $("#example1 tbody #row-" + value).remove();
-                        })
-                        alert('Se han eliminado' + ids.length + ' elementos correctamente.')
-                    } else {
-                        alert('Ha ocurrido un error.')
+        Swal.fire({
+            title: 'Está seguro?',
+            text: "Desea realmente eliminar " + ids.length + " ofertas profesionales.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Eliminar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let url = $("#btn-all-delete").val();
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    data: {'list_id[]': ids},
+                    dataType: 'json',
+                    success: (data) => {
+                        console.log(data)
+                        if (data.deleted) {
+                            ids.forEach((value) => {
+                                console.log('value:' + value)
+                                $("#example tbody #row-" + value).remove();
+
+                            })
+                            let toast = {
+                                title: "Correcto",
+                                message:  'Han sido eliminados '+ids.length + ' perfiles satisfactoriamente.',
+                                status: TOAST_STATUS.SUCCESS,
+                                timeout: 5000
+                            }
+                            Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+                            Toast.setTheme(TOAST_THEME.LIGHT);
+                            Toast.create(toast);
+                        } else {
+                            alert('Ha ocurrido un error.')
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
+        })
     }
 })
 
 function eliminarObject(id, _url, title) {
-    if (confirm("Desea eliminar realmente la oferta profesional: " + title)) {
+    Swal.fire({
+        title: 'Está seguro?',
+        text: "Desea realmente eliminar la oferta profesional: " + title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Eliminar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: _url,
+                type: 'get',
+                data: {
+                    'pk': id
+                },
+                dataType: 'json',
+                success: (data) => {
+                    if (data.deleted) {
+                        $("#example tbody #row-" + id).remove();
+                        let toast = {
+                            title: "Correcto",
+                            message: 'Perfil eliminado satisfactoriamente.',
+                            status: TOAST_STATUS.SUCCESS,
+                            timeout: 5000
+                        }
+                        Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+                        Toast.setTheme(TOAST_THEME.LIGHT);
+                        Toast.create(toast);
+                    } else {
+                        alert('Ha ocurrido un error.');
+                    }
+                },
+            })
+        }
+    })
 
-        $.ajax({
-            url: _url,
-            type: 'get',
-            data: {
-                'pk': id
-            },
-            dataType: 'json',
-            success: (data) => {
-                if (data.deleted) {
-                    $("#modal-delete").modal('hide');
-                    $("#example tbody #row-" + id).remove();
-                    alert('Oferta profesional: ' + title + ' eliminada correctamente.')
-
-                } else {
-                    alert('Ha ocurrido un error.');
-                }
-            },
-        })
-    }
 }

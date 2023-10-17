@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User, Group
 from django.test import TestCase
 
@@ -185,6 +187,13 @@ class AddAbilities(TestCase):
     # Rolls
     abilities.append('Tester')
 
+    Ability.objects.all().delete()
+    Settings.objects.all().delete()
+    JobOffer.objects.all().delete()
+    User.objects.all().delete()
+    Teacher.objects.all().delete()
+    Student.objects.all().delete()
+
     for h in abilities:
         a = Ability(ability=h)
         a.save()
@@ -196,91 +205,109 @@ class AddUser(TestCase):
              username='yoel', is_superuser=True)
     u.set_password("12345678")
     u.save()
+    Settings.objects.create(user_id=u.pk)
 
     u2 = User(first_name='Carlos', is_active=True, is_staff=True,
               username='carlos', is_superuser=True)
     u2.set_password("12345678")
     u2.save()
+    Settings.objects.create(user_id=u2.pk)
 
     u3 = User(first_name='Mariem', last_name='', is_active=True, is_staff=True,
               username='mariem', is_superuser=True)
     u3.set_password("12345678")
     u3.save()
+    Settings.objects.create(user_id=u3.pk)
 
     u4 = User(first_name='Jose', last_name='Ricardo', is_active=True, is_staff=True,
               username='jose_ricardo', is_superuser=True)
     u4.set_password("12345678")
     u4.save()
+    Settings.objects.create(user_id=u4.pk)
 
     u5 = User(first_name='Jonathan', is_active=True, is_staff=True,
               username='jonathan', is_superuser=True)
     u5.set_password("12345678")
     u5.save()
+    Settings.objects.create(user_id=u5.pk)
 
     u6 = User(first_name='Gretter', last_name='', is_active=True, is_staff=True,
               username='gretter', is_superuser=True)
     u6.set_password("12345678")
     u6.save()
+    Settings.objects.create(user_id=u6.pk)
 
     u7 = User(first_name='Lorem', is_active=True, is_staff=True,
               username='lorem', is_superuser=True)
     u7.set_password("12345678")
     u7.save()
+    Settings.objects.create(user_id=u7.pk)
 
     u8 = User(first_name='Luis', last_name='Angel', is_active=True, is_staff=True,
               username='luis', is_superuser=True)
     u8.set_password("12345678")
     u8.save()
+    Settings.objects.create(user_id=u8.pk)
 
     u9 = User(first_name='Leonardo', is_active=True, is_staff=True,
               username='leonardo', is_superuser=True)
     u9.set_password("12345678")
     u9.save()
+    Settings.objects.create(user_id=u9.pk)
 
     u10 = User(first_name='Leandro', is_active=True, is_staff=True,
                username='leandro', is_superuser=True)
     u10.set_password("12345678")
     u10.save()
+    Settings.objects.create(user_id=u10.pk)
 
     u11 = User(first_name='Richard', last_name='', is_active=True, is_staff=True,
                username='richard', is_superuser=True)
     u11.set_password("12345678")
     u11.save()
+    Settings.objects.create(user_id=u11.pk)
 
     u12 = User(first_name='Lorena', is_active=True, is_staff=True,
                username='lorena', is_superuser=True)
     u12.set_password("12345678")
     u12.save()
+    Settings.objects.create(user_id=u12.pk)
 
     u13 = User(first_name='Keylin', is_active=True, is_staff=True,
                username='keylin', is_superuser=True)
     u13.set_password("12345678")
     u13.save()
+    Settings.objects.create(user_id=u13.pk)
 
     u14 = User(first_name='Jennifer', is_active=True, is_staff=True,
                username='jennifer', is_superuser=True)
     u14.set_password("12345678")
     u14.save()
+    Settings.objects.create(user_id=u14.pk)
 
     u15 = User(first_name='Heidys', is_active=True, is_staff=True,
                username='heidys', is_superuser=True)
     u15.set_password("12345678")
     u15.save()
+    Settings.objects.create(user_id=u15.pk)
 
     u16 = User(first_name='Juan', last_name='Antonio', is_active=True, is_staff=True,
                username='juan', is_superuser=True)
     u16.set_password("12345678")
     u16.save()
+    Settings.objects.create(user_id=u16.pk)
 
     u17 = User(first_name='Yoan', is_active=True, is_staff=True,
                username='yoan', is_superuser=True)
     u17.set_password("12345678")
     u17.save()
+    Settings.objects.create(user_id=u17.pk)
 
     u18 = User(first_name='Julio', is_active=True, is_staff=True,
                username='julio', is_superuser=True)
     u18.set_password("12345678")
     u18.save()
+    Settings.objects.create(user_id=u18.pk)
 
 
 class AddTeacher(TestCase):
@@ -554,8 +581,9 @@ class AddJobOffer(TestCase):
     # 4 ofertas de trabajo
     abilities = Ability.objects.all()
     teachers = Teacher.objects.all()
-    job_offer = JobOffer.objects.create(address='La Habana', title='Desarrollador full stack Laravel',
-                                        teacher=teachers.get(user__username='julio'))
+    job_offer = JobOffer.objects.create(modality='Presencial', address='La Habana',
+                                        title='Desarrollador full stack Laravel',
+                                        teacher=teachers.get(user__username='julio'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Bootstrap'))
     job_offer.abilities.add(abilities.get(ability='HTML'))
@@ -566,8 +594,9 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='Apache'))
     job_offer.abilities.add(abilities.get(ability='Laravel'))
 
-    job_offer = JobOffer.objects.create(address='La Habana', title='Administrador de bases de datos',
-                                        teacher=teachers.get(user__username='julio'))
+    job_offer = JobOffer.objects.create(modality='Teletrabajo', address='',
+                                        title='Administrador de bases de datos',
+                                        teacher=teachers.get(user__username='julio'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='SQL'))
     job_offer.abilities.add(abilities.get(ability='MySql'))
     job_offer.abilities.add(abilities.get(ability='PostgreSQL'))
@@ -579,8 +608,10 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='Linux'))
     job_offer.abilities.add(abilities.get(ability='Scrum'))
 
-    job_offer = JobOffer.objects.create(address='Las Villas', title='Tester',
-                                        teacher=teachers.get(user__username='julio'))
+    job_offer = JobOffer.objects.create(modality='Presencial', address='Las Villas', title='Tester',
+                                        teacher=teachers.get(user__username='julio'),
+                                        description="Tester con alto nivel en PHP y Selenium",
+                                        date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Pytest'))
     job_offer.abilities.add(abilities.get(ability='Selenium'))
     job_offer.abilities.add(abilities.get(ability='JUnit'))
@@ -590,8 +621,8 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='PHP'))
     job_offer.abilities.add(abilities.get(ability='Tester'))
 
-    job_offer = JobOffer.objects.create(address='Matanzas', title='Tester',
-                                        teacher=teachers.get(user__username='yoan'))
+    job_offer = JobOffer.objects.create(modality='Presencial', address='Matanzas', title='Tester',
+                                        teacher=teachers.get(user__username='yoan'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Angular'))
     job_offer.abilities.add(abilities.get(ability='HTML'))
@@ -600,7 +631,3 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='JSON'))
     job_offer.abilities.add(abilities.get(ability='Node.js'))
     job_offer.abilities.add(abilities.get(ability='Scrum'))
-
-
-class AddSetting(TestCase):
-    setting = Settings.objects.create()

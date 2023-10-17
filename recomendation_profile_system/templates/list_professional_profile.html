@@ -1,84 +1,163 @@
 {% extends 'teacher/teacherbase.html' %}
 {% load static %}
+{% load widget_tweaks %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'src/css/dataTables.bootstrap5.min.css' %}">
+{% endblock %}
 {% block content %}
     <div class="col-sm-8 col-md-10 m-auto">
         <div class="card shadow">
             <div class="card-header">
-                <h2 style="text-align:center;">Listado de Perfiles Profesionales</h2>
+                <h2 style="text-align:center;">Listado de Perfiles Profesionales por Oferta</h2>
             </div>
             <div class="card-body">
-                {% for datum in data %}
-                    <div class="row ">
-                        <table id="example" class="table table-striped mx-auto" style="width:95%; margin-bottom: 25px;">
-                            <thead>
-                            <div style="margin-left: 2%">
-                                <h4>
-                                    Oferta profesional: <a
-                                        href="{% url 'detail_job_offer_root' datum.offer.id %}">{{ datum.offer.title }}</a>
-                                </h4>
-                                {{ datum.offer.address }}.
-                                {% for ability in datum.offer.abilities.all %}
-                                    {{ ability }}
-                                {% endfor %}
+                <div class="row">
+                    <table id="example" class="table table-striped" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th><h6>
+                                Resultados con umbral de {{ umbral }}%
+                            </h6></th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                                <h6>
-                                    Resultados con umbral de {{ umbral }}%
-                                </h6>
-                            </div>
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Nombre</th>
-                                <th>Dirección</th>
-                                <th>Móvil</th>
-                                <th>Habilidades</th>
-                                <th>Similitud</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for profile in datum.profiles %}
+                        {% for datum in data %}
+                            <div class="row ">
                                 <tr>
                                     <td>
-                                        <img src="{% static profile.profile.profile_pic %}" width="25" height="25">
-                                    </td>
-                                    <td>
-                                        {{ profile.profile.get_name }}
-                                    </td>
-                                    <td>
-                                        {{ profile.profile.address }}
-                                    </td>
-                                    <td>
-                                        {{ profile.profile.mobile }}
-                                    </td>
-                                    <td>
-                                        {% for ability in profile.profile.abilities.all %}
-                                            {{ ability }}
-                                        {% endfor %}
-                                    </td>
-                                    <td>
-                                        {% if profile.similarity >= 95 %}
-                                            <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
-                                        {% elif profile.similarity < 95 and profile.similarity > 80 %}
-                                            <span class="float-right badge bg-info">{{ profile.similarity }} %</span>
-                                        {% elif profile.similarity <= 80 and profile.similarity > 60 %}
-                                            <span class="float-right badge bg-success">{{ profile.similarity }} %</span>
-                                        {% elif profile.similarity <= 60 and profile.similarity > 50 %}
-                                            <span class="float-right badge bg-warning">{{ profile.similarity }} %</span>
-                                        {% elif profile.similarity <= 50 %}
-                                            <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
+                                        {% if datum.count == 0 %}
+                                            <p style="text-align:center;">No existen perfiles profesionales para
+                                                recomendar. Asegúrese de
+                                                que la cantidad de elementos a mostrar sea distinta de 0. Para esto haga
+                                                click en este link <a
+                                                        href="{% url 'settings_root' request.user.settings.pk %}">
+                                                    Ajustes </a>.
+                                            </p>
+                                        {% else %}
+                                            <table id="example" class="table table-striped mx-auto"
+                                                   style="width:95%; margin-bottom: 25px;">
+                                                <thead>
+                                                <div style="margin-left: 2%">
+                                                    <h4>
+                                                        Oferta profesional: <a
+                                                            href="{% url 'detail_job_offer_root' datum.offer.id %}">{{ datum.offer.title }}</a>
+                                                    </h4>({{ datum.offer.date|date:"d/m/Y" }})
+                                                    {{ datum.offer.address }}.
+                                                    {% for ability in datum.offer.abilities.all %}
+                                                        {{ ability }}
+                                                    {% endfor %}
+
+
+                                                </div>
+                                                <tr>
+                                                    <th>Imagen</th>
+                                                    <th>Nombre</th>
+                                                    <th>Dirección</th>
+                                                    <th>Contacto</th>
+                                                    <th>Habilidades</th>
+                                                    <th>Similitud</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for profile in datum.profiles %}
+                                                    <tr>
+                                                        <td>
+                                                            <img src="{% static profile.profile.profile_pic %}"
+                                                                 width="25"
+                                                                 height="25">
+                                                        </td>
+                                                        <td>
+                                                            {{ profile.profile.get_name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ profile.profile.address }}
+                                                        </td>
+                                                        <td>
+                                                            {% if profile.profile.mobile is not null and profile.profile.mobile != '' %}
+                                                                {{ profile.profile.mobile }}
+                                                            {% endif %}
+                                                            {% if profile.profile.user.email is not null and profile.profile.user.email != '' %}
+                                                                ,
+                                                                {{ profile.profile.user.email }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="abilities_text">
+                                                            {% for ability in profile.profile.abilities.all %}
+                                                                {{ ability }},
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>
+                                                            {% if profile.similarity >= 95 %}
+                                                                <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
+                                                            {% elif profile.similarity < 95 and profile.similarity > 80 %}
+                                                                <span class="float-right badge bg-info">{{ profile.similarity }} %</span>
+                                                            {% elif profile.similarity <= 80 and profile.similarity > 60 %}
+                                                                <span class="float-right badge bg-success">{{ profile.similarity }} %</span>
+                                                            {% elif profile.similarity <= 60 and profile.similarity > 50 %}
+                                                                <span class="float-right badge bg-warning">{{ profile.similarity }} %</span>
+                                                            {% elif profile.similarity <= 50 %}
+                                                                <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
                                         {% endif %}
+
                                     </td>
                                 </tr>
+                            </div>
+
+                        {% endfor %}
+
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                    {% block javaScript %}
+                        <script src="{% static 'src/js/jquery.dataTable.min.js' %}"></script>
+                        <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
+                    {% endblock %}
+                    <script>
+                        new DataTable('#example', {
+                            language: {
+                                info: 'Mostrando página _PAGE_ de _PAGES_',
+                                infoEmpty: 'No existen registros a mostrar',
+                                infoFiltered: '(Buscado de _MAX_ registros total)',
+                                lengthMenu: 'Mostrar _MENU_ registros por página',
+                                zeroRecords: 'No existen registros - lo sentimos'
+                            }
+                        });
+                        // elimina la última coma de las habilidades
+                        arr = $(".abilities_text")
+                        for (let arrElement of arr) {
+                            arrElement.textContent = arrElement.textContent.trim().slice(0, -1)
+                        }
+
+                        // Mostrar los mensajes
+                        {% if messages %}
+                            {% for message in messages %}
+                                if ("{{ message.tags }}" == "success") {
+                                    let toast = {
+                                        title: "Correcto",
+                                        message: '{{ message }}',
+                                        status: TOAST_STATUS.SUCCESS,
+                                        timeout: 5000
+                                    }
+                                    Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+                                    Toast.setTheme(TOAST_THEME.LIGHT);
+                                    Toast.create(toast);
+                                }
                             {% endfor %}
-                            </tbody>
-                        </table>
-
-                        <script>
-                        </script>
-                    </div>
-
-                {% endfor %}
+                        {% endif %}
+                    </script>
+                </div>
             </div>
         </div>
     </div>
-
 {% endblock %}

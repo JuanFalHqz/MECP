@@ -26,6 +26,22 @@
                 </div>
             </div>
             <div class="mb-3">
+                <label class="form-label" for="modality">
+                    <strong>Modaldiad</strong>
+                </label>
+                <select id="select-modality" class="form-select form-select-md" aria-label=".form-select-md"
+                        name="modality" id="modality"
+                        required>
+                    {% for modality in modalities %}
+                        <option value="{{ modality }}">{{ modality }}</option>
+                    {% endfor %}
+                </select>
+                <div class="error" id="modality-error">
+
+                </div>
+            </div>
+
+            <div class="mb-3" id="address-panel">
                 <label class="form-label" for="address">
                     <strong>Dirección</strong>
                 </label>
@@ -52,6 +68,14 @@
 
                 </div>
             </div>
+            <div class="mb-3" id="description-panel">
+                <label class="form-label" for="description">
+                    <strong>Descripción</strong>
+                </label>
+                <textarea id="description" class="form-control" id="description">{% if job_offer.description != None %}
+                    {{ job_offer.description }}{% endif %}
+                </textarea>
+            </div>
             <div class="mb-3">
                 <button class="btn btn-primary" id="btn-update-job-offer" type="button">Modificar</button>
             </div>
@@ -60,6 +84,33 @@
 
 
     <script>
+        //Properties initial
+        {% if job_offer.modality == 'Teletrabajo' %}
+            $('#address-panel').hide();
+        {% endif %}
+        $("#description").text("{{ job_offer.description }}".trim())
+
+        function load_select() {
+            //cargar los datos del select
+            let select = document.querySelector('#select-abilities');
+            let options = Array.from(select.options)
+            {% for ability in abilities_select %}
+                options.find(i => i.text === '{{ ability }}').selected = true;
+            {% endfor %}
+
+        }
+
+        function load_modality_select() {
+            //cargar los datos del select
+            let select = document.querySelector('#select-modality');
+            let options = Array.from(select.options)
+            options.find(i => i.text === '{{ job_offer.modality }}').selected = true;
+
+        }
+
+        load_select()
+        load_modality_select()
+
         //validations.
         function title_is_valid() {
             if ($('#title').val().trim() == '') {
@@ -79,6 +130,15 @@
             return true
         }
 
+        function modality_is_valid() {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                return address_is_valid();
+            } else {
+                $('#address').val('');
+                return true;
+            }
+        }
+
         function abilities_is_valid() {
             if ($('.filter-option-inner-inner').text() == 'Seleccione al menos una habilidad') {
                 $('#abilities-error').text("Seleccione al menos una habilidad");
@@ -90,30 +150,36 @@
 
         function all_is_valid() {
             let a = title_is_valid()
-            let b = address_is_valid()
+            let b = modality_is_valid()
             let c = abilities_is_valid()
             return a && b && c;
         }
 
-        function load_select() {
-            //cargar los datos del select
-            let select = document.querySelector('#select-abilities');
-            let options = Array.from(select.options)
-            {% for ability in abilities_select %}
-                options.find(i => i.text === '{{ ability }}').selected = true;
-            {% endfor %}
-
-        }
-
-        load_select()
+        $('#select-modality').on('change', () => {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                $('#address-panel').show()
+            } else {
+                $('#address').val('')
+                $('#address-panel').hide()
+            }
+        })
         // Guarda la oferta de trabajo si es válida la enrada.
         $('#btn-update-job-offer').on('click', () => {
             if (all_is_valid()) {
 
                 let title = $('#title').val().trim();
+                let modality = $('#select-modality').val();
                 let address = $('#address').val().trim();
                 let abilities = $("#select-abilities").val();
-                let datas = {'pk':{{ job_offer.pk }}, 'title': title, 'address': address, 'abilities': abilities}
+                let description = $("#description").val().trim();
+                let datas = {
+                    'pk':{{ job_offer.pk }},
+                    'title': title,
+                    'modality': modality,
+                    'address': address,
+                    'abilities': abilities,
+                    'description': description
+                }
                 console.log(datas)
                 $.ajax({
                     url: '{{ root }}',
@@ -121,10 +187,12 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
+                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
                         window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
                     },
                     error: (data) => {
                         alert(data);
+                        console.log(data);
                     }
                 })
             }

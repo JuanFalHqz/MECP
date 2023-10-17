@@ -1,0 +1,251 @@
+{% extends 'student/studentbase.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'src/css/dataTables.bootstrap5.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="col-sm-10 col-md-10 m-auto">
+        <div class="card shadow mb-3">
+            {% if count == 0 %}
+                <p style="text-align:center;">No existen ofertas profesionales para
+                    recomendar. Asegúrese de
+                    que la cantidad de elementos a mostrar sea distinta de 0. Para esto haga
+                    click en este link <a href="{% url 'settings_root_student' request.user.settings.pk %}">
+                        Ajustes </a>.
+                </p>
+            {% else %}
+                <div class="card-header py-3">
+                    <h2 style="text-align:center;">Le recomendamos estas ofertas profesionales basado en su perfil.</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <table id="example" class="table table-striped" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha(d/m/a)</th>
+                                <th>Contacto</th>
+                                <th>Modalidad</th>
+                                <th>Dirección</th>
+                                <th>Habilidades</th>
+                                <th>Descripción</th>
+                                <th>Similitud</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for job in job_offer %}
+                                <tr id="row-{{ job.id }}">
+                                    <td>{{ job.offer.title }}</td>
+                                    <td>{{ job.offer.date| date:"d/m/Y" }}</td>
+                                    <td>{{ job.offer.teacher }}
+                                        {% if job.offer.teacher.mobile %}
+                                            - {{ job.offer.teacher.mobile }}
+                                        {% endif %}
+                                        {% if job.offer.teacher.user.email %}
+                                            - {{ job.offer.teacher.user.email }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ job.offer.modality }}
+                                    </td>
+                                    <td>
+                                        {% if job.offer.address == '' %}
+                                            -
+                                        {% else %}
+                                            {{ job.offer.address }}
+                                        {% endif %}
+                                    </td>
+                                    <td id="td_abilities" class="abilities_text">
+                                        {% for ability in job.offer.abilities.all %}
+                                            {{ ability }},
+                                        {% endfor %}
+
+                                    </td>
+                                    <td>
+                                        {% if job.offer.description == '' or job.offer.description is None %}
+                                            -
+                                        {% else %}
+                                            {{ job.offer.description }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if job.similarity >= 95 %}
+                                            <span class="float-right badge bg-primary">{{ job.similarity }} %</span>
+                                        {% elif job.similarity < 95 and job.similarity > 80 %}
+                                            <span class="float-right badge bg-info">{{ job.similarity }} %</span>
+                                        {% elif job.similarity <= 80 and job.similarity > 60 %}
+                                            <span class="float-right badge bg-success">{{ job.similarity }} %</span>
+                                        {% elif job.similarity <= 60 and job.similarity > 50 %}
+                                            <span class="float-right badge bg-warning">{{ job.similarity }} %</span>
+                                        {% elif job.similarity <= 50 %}
+                                            <span class="float-right badge bg-danger">{{ job.similarity }} %</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <!-- Example single danger button -->
+                                        <div>
+                                            <a href="{% url 'detail_job_offer_root' job.offer.id %}"
+                                               role="button" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye"> Mostrar</i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha(d/m/a)</th>
+                                <th>Contacto</th>
+                                <th>Modalidad</th>
+                                <th>Dirección</th>
+                                <th>Habilidades</th>
+                                <th>Descripción</th>
+                                <th>Similitud</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="card shadow mb-3">
+            {% if count2 == 0 %}
+            {% else %}
+                <div class="card-header py-3">
+                    <h2 style="text-align:center;">También puede ver estas ofertas.</h2>
+                </div>
+                <div class="card-body">
+                    {{ job_offer_not_recommended.count }}
+                    <div class="row">
+                        <table id="example1" class="table table-striped" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha(d/m/a)</th>
+                                <th>Contacto</th>
+                                <th>Modalidad</th>
+                                <th>Dirección</th>
+                                <th>Habilidades</th>
+                                <th>Descripción</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for job in job_offer_not_recommended %}
+                                <tr id="row-{{ job.id }}">
+                                    <td>{{ job.title }}</td>
+                                    <td>{{ job.date| date:"d/m/Y" }}</td>
+                                    <td>{{ job.teacher }}
+                                        {% if job.teacher.mobile %}
+                                            - {{ job.teacher.mobile }}
+                                        {% endif %}
+                                        {% if job.teacher.user.email %}
+                                            - {{ job.teacher.user.email }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ job.modality }}
+                                    </td>
+                                    <td>
+                                        {% if job.address == '' %}
+                                            -
+                                        {% else %}
+                                            {{ job.address }}
+                                        {% endif %}
+                                    </td>
+                                    <td id="td_abilities" class="abilities_text">
+                                        {% for ability in job.abilities.all %}
+                                            {{ ability }},
+                                        {% endfor %}
+
+                                    </td>
+                                    <td>
+                                        {% if job.description == '' or job.description is None %}
+                                            -
+                                        {% else %}
+                                            {{ job.description }}
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <!-- Example single danger button -->
+                                        <div>
+                                            <a href="{% url 'detail_job_offer_root' job.id %}"
+                                               role="button" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-eye"> Mostrar</i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>Título</th>
+                                <th>Fecha(d/m/a)</th>
+                                <th>Contacto</th>
+                                <th>Modalidad</th>
+                                <th>Dirección</th>
+                                <th>Habilidades</th>
+                                <th>Descripción</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block javaScript %}
+    <script src="{% static 'src/js/jquery.dataTable.min.js' %}"></script>
+    <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
+    <script>
+        new DataTable('#example', {
+            language: {
+                info: 'Mostrando página _PAGE_ de _PAGES_',
+                infoEmpty: 'No existen registros a mostrar',
+                infoFiltered: '(Buscado de _MAX_ registros total)',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                zeroRecords: 'No existen registros - lo sentimos'
+            }
+        });
+        new DataTable('#example1', {
+            language: {
+                info: 'Mostrando página _PAGE_ de _PAGES_',
+                infoEmpty: 'No existen registros a mostrar',
+                infoFiltered: '(Buscado de _MAX_ registros total)',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                zeroRecords: 'No existen registros - lo sentimos'
+            }
+        });
+        // elimina la última coma de las habilidades
+        arr = $(".abilities_text")
+        for (let arrElement of arr) {
+            arrElement.textContent = arrElement.textContent.trim().slice(0, -1)
+        }
+
+        // Mostrar los mensajes
+        {% if messages %}
+            {% for message in messages %}
+                if ("{{ message.tags }}" == "success") {
+                    let toast = {
+                        title: "Correcto",
+                        message: '{{ message }}',
+                        status: TOAST_STATUS.SUCCESS,
+                        timeout: 5000
+                    }
+                    Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+                    Toast.setTheme(TOAST_THEME.LIGHT);
+                    Toast.create(toast);
+                }
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'student/studentbase.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-sm-10 col-md-10 m-auto">
+        <div class="card shadow mb-3">
+            <div class="card-header py-3">
+                <h2 style="text-align:center;">Oferta Profesional {{ job_offer.title }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-2">
+                            <label class="form-label" for="username">
+                                <strong>Título: </strong>
+                            </label>
+                            {{ job_offer.title }}
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label" for="username">
+                                <strong>Modalidad: </strong>
+                            </label>
+                            {{ job_offer.modality }}
+                        </div>
+                        {% if job_offer.address is not None and job_offer.address != '' %}
+                            <div class="mb-2"><label class="form-label" for="first_name"><strong>Dirección: </strong>
+                            </label>
+                                {{ job_offer.address }}
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-2 abilities_text">
+                            <label class="form-label" for="email">
+                                <strong>Habilidades: </strong>
+                            </label>
+                            {% for ability in job_offer.abilities.all %}
+                                {{ ability }},
+                            {% endfor %}
+                        </div>
+
+                        {% if job_offer.description is not None and job_offer.description != '' %}
+                            <div class="mb-2"><label class="form-label" for="first_name"><strong>Descripción: </strong>
+                            </label>
+                                {{ job_offer.description }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <a href="javascript:window.history.back()" class="btn btn-primary btn-sm" type="button">Regresar</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // elimina la última coma de las habilidades
+        arr = $(".abilities_text")
+        for (let arrElement of arr) {
+            arrElement.innerHTML = arrElement.innerHTML.trim().slice(0, -1)
+        }
+
+    </script>
+{% endblock %}

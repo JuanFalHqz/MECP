@@ -1,9 +1,14 @@
+from datetime import datetime
+
+from django.contrib import messages
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from exam.views import is_student
 from recomendation_profile_system.forms import JobOfferForm, SettingsForm
 from recomendation_profile_system.models import JobOffer, Settings
 from student.models import Ability, Student
@@ -11,7 +16,7 @@ from student.models import Ability, Student
 
 #   JobOffer Classes
 class AddJobOffer(CreateView):
-    template_name = 'professional_profile_add.html'
+    template_name = 'add_professional_offer.html'
     model = JobOffer
     form_class = JobOfferForm
 
@@ -19,6 +24,7 @@ class AddJobOffer(CreateView):
         context = super().get_context_data(**kwargs)
         context['abilities'] = Ability.objects.all()
         context['root'] = reverse_lazy('add_job_offer_post_root')
+        context['modalities'] = ['Teletrabajo', 'Presencial', 'Híbrido']
         return context
 
 
@@ -35,24 +41,29 @@ class UpdateJobOffer(UpdateView):
             context['abilities_select'] = JobOffer.objects.get(pk=pk).abilities.all()
             context['abilities'] = Ability.objects.all()
             context['root'] = reverse_lazy('update_job_offer_post_root')
+            context['modalities'] = ['Teletrabajo', 'Presencial', 'Híbrido']
             return context
         except Exception as e:
             e.__str__
 
 
 class DetailJobOffer(TemplateView):
-    template_name = 'detail_job_offer.html'
+    template_name = 'detail_professional_offer.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if context['pk']:
+            context['job_offer'] = JobOffer.objects.get(id=context['pk'])
+            if is_student(request.user):
+                self.template_name = 'detail_professional_offer_to_studet.html'
+                return self.render_to_response(context)
             x = JobOffer.objects.get(id=context['pk'])
             y = x.abilities.all()
-            context['job_offer'] = JobOffer.objects.get(id=context['pk'])
             #
             rppjo = RecommendationProfessionalProfile(self.request.user.teacher)
             context['data'] = rppjo.get_recommended_by_offer(context['pk'])
-            context['umbral'] = Settings.objects.get(id=1).relevance_umbral
+            context['umbral'] = rppjo.setting.relevance_umbral
+            context['count'] = len(context['data'])
 
         return self.render_to_response(context)
 
@@ -100,16 +111,16 @@ class DeleteJobOffer(DeleteView):
 
 
 class ListJobOffer(ListView):
-    template_name = 'list_job_offer.html'
+    template_name = 'list_professional_offer.html'
     model = JobOffer
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['job_offer'] = JobOffer.objects.filter(teacher=self.request.user.teacher)
+        context['job_offer'] = JobOffer.objects.filter(teacher=self.request.user.teacher).order_by('-date')
         return context
 
 
-class ListStudent(ListView):
+class ListProfileProfessionals(ListView):
     template_name = 'list_professional_profile.html'
     model = Student
 
@@ -119,7 +130,7 @@ class ListStudent(ListView):
             context['profiles_by'] = JobOffer.objects.filter(teacher=self.request.user.teacher)
             rppjo = RecommendationProfessionalProfile(self.request.user.teacher)
             context['data'] = rppjo.get_profiles_recommended()
-            context['umbral'] = Settings.objects.get(id=1).relevance_umbral
+            context['umbral'] = rppjo.setting.relevance_umbral
             return context
         except Exception as e:
             e.__str__()
@@ -144,7 +155,7 @@ class RecommendationProfessionalProfile:
         self.professional_profiles = Student.objects.all()
         self.teacher = teacher
         self.professional_profiles = Student.objects.all()
-        self.setting = RecommendationSystemSettings().get_all_setting()
+        self.setting = Settings.objects.get(user_id=teacher.user.settings.pk)
 
     def get_job_offer_to_text(self):
         list = []
@@ -178,10 +189,55 @@ class RecommendationProfessionalProfile:
         ofertas = self.get_job_offer_to_text()
         perfiles = self.get_profiles_to_text()
         r = Recommendation()
-        for offer in ofertas:
+        try:
+            for offer in ofertas:
+                similarities = []
+                for profile in perfiles:
+                    similarity = r.similarity(offer['meta'], profile['meta'])
+                    if similarity * 100 >= self.setting.relevance_umbral:
+                        similarities.append({
+                            'profile': Student.objects.get(pk=profile['id']),
+                            'similarity': round(similarity * 100, 2)
+                        })
+                # ordenar y tomar según la cantidad
+                similarities.sort(key=lambda x: x['similarity'], reverse=True)
+                if len(similarities) > self.setting.cant_element_to_show:
+                    _similarities_ = similarities
+                    similarities = []
+                    i = 0
+                    while i < self.setting.cant_element_to_show:
+                        similarities.append(_similarities_[i])
+                        i += 1
+                job = JobOffer.objects.get(id=offer['id'])
+                date = str(job.date.day) + "/" + str(job.date.month) + "/" + str(job.date.year)
+                profiles_similarities.append({
+                    'offer': job,
+                    'profiles': similarities,
+                    'date': date,
+                    'count': len(similarities),
+                })
+            profiles_similarities.sort(key=lambda x: x['date'], reverse=True)
+        except Exception as e:
+            e.__str__()
+        return profiles_similarities
+
+    def get_recommended_by_offer(self, id):
+        """
+        Retorna una oferta de trabajo y los perfiles similares de acorde al umbral de similitud.
+        """
+        ofertas = self.get_job_offer_to_text()
+        oferta = ''
+        try:
+            for o in ofertas:
+                if o['id'] == id:
+                    oferta = o
+
+            perfiles = self.get_profiles_to_text()
+            r = Recommendation()
+
             similarities = []
             for profile in perfiles:
-                similarity = r.similarity(offer['meta'], profile['meta'])
+                similarity = r.similarity(oferta['meta'], profile['meta'])
                 if similarity * 100 >= self.setting.relevance_umbral:
                     similarities.append({
                         'profile': Student.objects.get(pk=profile['id']),
@@ -196,46 +252,10 @@ class RecommendationProfessionalProfile:
                 while i < self.setting.cant_element_to_show:
                     similarities.append(_similarities_[i])
                     i += 1
-            profiles_similarities.append({
-                'offer': JobOffer.objects.get(id=offer['id']),
-                'profiles': similarities
-            })
-            profiles_similarities
-        return profiles_similarities
-
-    def get_recommended_by_offer(self, id):
-        """
-        Retorna una oferta de trabajo y los perfiles similares de acorde al umbral de similitud.
-        """
-        ofertas = self.get_job_offer_to_text()
-        oferta = ''
-        for o in ofertas:
-            if o['id'] == id:
-                oferta = o
-
-        perfiles = self.get_profiles_to_text()
-        r = Recommendation()
-
-        similarities = []
-        for profile in perfiles:
-            similarity = r.similarity(oferta['meta'], profile['meta'])
-            if similarity * 100 >= self.setting.relevance_umbral:
-                similarities.append({
-                    'profile': Student.objects.get(pk=profile['id']),
-                    'similarity': round(similarity * 100, 2)
-                })
-        # ordenar y tomar según la cantidad
-        similarities.sort(key=lambda x: x['similarity'], reverse=True)
-        if len(similarities) > self.setting.cant_element_to_show:
-            _similarities_ = similarities
-            similarities = []
-            i = 0
-            while i < self.setting.cant_element_to_show:
-                similarities.append(_similarities_[i])
-                i += 1
-
+        except Exception as e:
+            e.__str__()
         return similarities
-    998
+
 
 class Recommendation():
     def similarity(self, text1, text2):
@@ -251,30 +271,6 @@ class Recommendation():
 
 
 #   Setting Classes
-class RecommendationSystemSettings:
-    setting = ''
-
-    def __init__(self):
-        self.setting = Settings.objects.get(id=1)
-
-    def get_all_setting(self):
-        return self.setting
-
-    def get_cant_element_to_show(self):
-        return self.setting.cant_element_to_show
-
-    def get_relevance_umbral(self):
-        return self.setting.relevance_umbral
-
-    def set_cant_element_to_show(self, cant_element_to_show):
-        self.setting.cant_element_to_show = cant_element_to_show
-        self.setting.save()
-
-    def set_relevance_umbral(self, relevance_umbral):
-        self.setting.relevance_umbral = relevance_umbral
-        self.setting.save()
-
-
 class UpdateSettings(UpdateView):
     template_name = 'settings.html'
     model = Settings
@@ -286,23 +282,48 @@ class UpdateSettings(UpdateView):
         context['success_url'] = self.success_url
         return context
 
+    def post(self, request, *args, **kwargs):
+        data = {
+            'form': SettingsForm()
+        }
+        try:
+            if request.method == 'POST':
+                form = SettingsForm(data=request.POST)
+                if form.is_valid():
+                    self.object = self.get_object()
+                    form = self.get_form()
+                    form.save()
+                    messages.success(request, "Ajustes guardados satisfactoriamente.")
+                    response = super().post(request, *args, **kwargs)
+                    return response
+                else:
+                    data['form'] = form
+        except Exception as e:
+            e.__str__()
+        return render(request, self.template_name, data)
+
 
 def add_job_offer(request):
     if request.method == 'POST':
         title = request.POST.get('title')
+        modality = request.POST.get('modality')
         address = request.POST.get('address')
+        description = request.POST.get('description')
         abilities = request.POST.getlist('abilities[]')
         teacher = request.user.teacher
         # Validations
         if title == '' or title is None:
             return JsonResponse('Escriba el título', 300)
-        if address == '' or address is None:
+        if modality == '' or modality is None:
+            return JsonResponse('Seleccione la modalidad', 300)
+        if (address == '' and not modality == "Teletrabajo") or (address is None and not modality == "Teletrabajo"):
             return JsonResponse('Escriba la dirección', 300)
         if len(abilities) == 0 or abilities is None:
             return JsonResponse('Seleccione al menos una habilidad', 300)
         # Save
         try:
-            job_offer = JobOffer.objects.create(title=title, address=address, teacher=teacher)
+            job_offer = JobOffer.objects.create(title=title, address=address, teacher=teacher, modality=modality,
+                                                description=description, date=datetime.now().date())
             for ability_pk in abilities:
                 job_offer.abilities.add(ability_pk)
             return JsonResponse({'pk': job_offer.pk}, status=201)
@@ -313,13 +334,17 @@ def add_job_offer(request):
 def update_job_offer(request):
     if request.method == 'POST':
         title = request.POST.get('title')
+        modality = request.POST.get('modality')
         pk = int(request.POST.get('pk'))
         address = request.POST.get('address')
+        description = request.POST.get('description')
         abilities = request.POST.getlist('abilities[]')
         # Validations
         if title == '' or title is None:
             return JsonResponse('Escriba el título', 300)
-        if address == '' or address is None:
+        if modality == '' or modality is None:
+            return JsonResponse('Seleccione la modalidad', 300)
+        if (address == '' and not modality == "Teletrabajo") or (address is None and not modality == "Teletrabajo"):
             return JsonResponse('Escriba la dirección', 300)
         if len(abilities) == 0 or abilities is None:
             return JsonResponse('Seleccione al menos una habilidad', 300)
@@ -328,7 +353,9 @@ def update_job_offer(request):
             job_offer = JobOffer.objects.get(pk=pk)
 
             job_offer.title = title
+            job_offer.modality = modality
             job_offer.address = address
+            job_offer.description = description
             job_offer.abilities.clear()
             for ability_pk in abilities:
                 job_offer.abilities.add(ability_pk)

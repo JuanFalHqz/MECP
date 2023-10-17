@@ -1,17 +1,32 @@
 {% extends 'teacher/teacherbase.html' %}
 {% load static %}
-{% block content %}
-    <head>
-        <style>
-            label > strong {
-                color: #3a3b45;
-            }
+{% block head %}
+    <style>
+        label > strong {
+            color: #3a3b45;
+        }
 
-            .error {
-                color: rgba(255, 24, 24, 0.78);
+        .error {
+            color: rgba(255, 24, 24, 0.78);
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <script>
+        // Notification Load
+        if (localStorage.getItem('text_message')) {
+            let toast = {
+                title: "Correcto",
+                message: 'Perfil guardado satisfactoriamente.',
+                status: TOAST_STATUS.SUCCESS,
+                timeout: 5000
             }
-        </style>
-    </head>
+            Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+            Toast.setTheme(TOAST_THEME.LIGHT);
+            Toast.create(toast);
+            localStorage.removeItem('text_message');
+        }
+    </script>
     <div class="justify-content-center col-md-6 col-sm-4 m-auto">
         <h2 style="text-align:center;">Añadir Oferta Profesional</h2>
         <form>
@@ -26,6 +41,21 @@
                 </div>
             </div>
             <div class="mb-3">
+                <label class="form-label" for="modality">
+                    <strong>Modaldiad</strong>
+                </label>
+                <select id="select-modality" class="form-select form-select-md" aria-label=".form-select-md"
+                        name="modality" id="modality"
+                        required>
+                    {% for modality in modalities %}
+                        <option value="{{ modality }}">{{ modality }}</option>
+                    {% endfor %}
+                </select>
+                <div class="error" id="modality-error">
+
+                </div>
+            </div>
+            <div class="mb-3" id="address-panel">
                 <label class="form-label" for="address">
                     <strong>Dirección</strong>
                 </label>
@@ -49,20 +79,40 @@
                     {% endfor %}
                 </select>
                 <div class="error" id="abilities-error">
-
                 </div>
             </div>
-            <div class="mb-3">
-                <button class="btn btn-primary" id="btn-add-job-offer" type="button">Guardar</button>
-                <button class="ml-2 btn btn-primary" id="btn-add-again" type="button">Guardar y añadir otro
-                </button>
+            <div class="mb-3" id="description-panel">
+                <label class="form-label" for="description">
+                    <strong>Descripción</strong>
+                </label>
+                <textarea class="form-control" id="description"></textarea>
+            </div>
+            <div class="mb-3 d-flex">
+                <div class="col-6">
+                    <button class="btn btn-primary" id="btn-add-job-offer" type="button">Guardar</button>
+                    <button class="ml-2 btn btn-primary" id="btn-add-again" type="button">Guardar y añadir otro</button>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <a href="javascript:window.history.back()" class="ml-2 btn btn-secondary " id="btn-add-again"
+                       type="button">
+                        Cancelar
+                    </a>
+                </div>
+
             </div>
 
         </form>
     </div>
 
 
+
+{% endblock %}
+
+{% block javaScript %}
     <script>
+        //Properties initial
+        $('#address-panel').hide()
+
         //validations.
         function title_is_valid() {
             if ($('#title').val().trim() == '') {
@@ -82,6 +132,15 @@
             return true
         }
 
+        function modality_is_valid() {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                return address_is_valid();
+            } else {
+                $('#address').val('');
+                return true;
+            }
+        }
+
         function abilities_is_valid() {
             if ($('.filter-option-inner-inner').text() == 'Seleccione al menos una habilidad') {
                 $('#abilities-error').text("Seleccione al menos una habilidad");
@@ -93,19 +152,35 @@
 
         function all_is_valid() {
             let a = title_is_valid()
-            let b = address_is_valid()
+            let b = modality_is_valid()
             let c = abilities_is_valid()
             return a && b && c;
         }
 
+        $('#select-modality').on('change', () => {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                $('#address-panel').show()
+            } else {
+                $('#address').val('')
+                $('#address-panel').hide()
+            }
+        })
         // Guarda la oferta de trabajo si es válida la enrada.
         $('#btn-add-job-offer').on('click', () => {
             if (all_is_valid()) {
 
                 let title = $('#title').val().trim();
+                let modality = $('#select-modality').val();
                 let address = $('#address').val().trim();
                 let abilities = $("#select-abilities").val();
-                let datas = {'title': title, 'address': address, 'abilities': abilities}
+                let description = $("#description").val();
+                let datas = {
+                    'title': title,
+                    'modality': modality,
+                    'address': address,
+                    'abilities': abilities,
+                    'description': description
+                }
 
                 $.ajax({
                     url: '{{ root }}',
@@ -113,6 +188,7 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
+                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
                         window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
                     },
                     error: (data) => {
@@ -127,9 +203,17 @@
             if (all_is_valid()) {
 
                 let title = $('#title').val().trim();
+                let modality = $('#select-modality').val();
                 let address = $('#address').val().trim();
                 let abilities = $("#select-abilities").val();
-                let datas = {'title': title, 'address': address, 'abilities': abilities}
+                let description = $("#description").val();
+                let datas = {
+                    'title': title,
+                    'modality': modality,
+                    'address': address,
+                    'abilities': abilities,
+                    description
+                }
 
                 $.ajax({
                     url: '{{ root }}',
@@ -137,6 +221,7 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
+                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
                         window.location.href = ("{% url 'add_job_offer_root' %}");
                     },
                     error: (data) => {
