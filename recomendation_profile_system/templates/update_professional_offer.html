@@ -76,8 +76,16 @@
                     {{ job_offer.description }}{% endif %}
                 </textarea>
             </div>
-            <div class="mb-3">
-                <button class="btn btn-primary" id="btn-update-job-offer" type="button">Modificar</button>
+            <div class="mb-3 d-flex">
+                <div class="col-6">
+                    <button class="btn btn-primary" id="btn-update-job-offer" type="button">Modificar</button>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <a href="javascript:window.history.back()" class="ml-2 btn btn-secondary " id="btn-add-again"
+                       type="button">
+                        Cancelar
+                    </a>
+                </div>
             </div>
         </form>
     </div>
@@ -88,7 +96,7 @@
         {% if job_offer.modality == 'Teletrabajo' %}
             $('#address-panel').hide();
         {% endif %}
-        $("#description").text("{{ job_offer.description }}".trim())
+        $("#description").text($("#description").text().trim())
 
         function load_select() {
             //cargar los datos del select
@@ -187,7 +195,7 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
-                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
+                        localStorage.setItem('text_message', 'Oferta modificada satisfactoriamente.');
                         window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
                     },
                     error: (data) => {

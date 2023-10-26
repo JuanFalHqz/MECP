@@ -27,11 +27,19 @@ $("#btn-all-delete").click((e) => {
         ids[i] = $(this).val();
     })
     if (ids.length == 0) {
-        alert('Seleccione los elementos a borrar.');
+        let toast = {
+            title: "Error",
+            message: 'Seleccione los elementos a eliminar',
+            status: TOAST_STATUS.DANGER,
+            timeout: 5000
+        }
+        Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+        Toast.setTheme(TOAST_THEME.LIGHT);
+        Toast.create(toast);
     } else {
         Swal.fire({
-            title: 'Está seguro?',
-            text: "Desea realmente eliminar " + ids.length + " ofertas profesionales.",
+            title: '¿Está seguro?',
+            text: "¿Desea realmente eliminar " + ids.length + " ofertas profesionales?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -55,7 +63,7 @@ $("#btn-all-delete").click((e) => {
                             })
                             let toast = {
                                 title: "Correcto",
-                                message:  'Han sido eliminados '+ids.length + ' perfiles satisfactoriamente.',
+                                message: 'Han sido eliminados ' + ids.length + ' perfiles satisfactoriamente.',
                                 status: TOAST_STATUS.SUCCESS,
                                 timeout: 5000
                             }
@@ -74,8 +82,8 @@ $("#btn-all-delete").click((e) => {
 
 function eliminarObject(id, _url, title) {
     Swal.fire({
-        title: 'Está seguro?',
-        text: "Desea realmente eliminar la oferta profesional: " + title,
+        title: '¿Está seguro?',
+        text: "¿Desea realmente eliminar la oferta profesional: " + title+" ?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',

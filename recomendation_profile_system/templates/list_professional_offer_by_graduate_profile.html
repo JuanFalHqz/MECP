@@ -15,7 +15,7 @@
                 </p>
             {% else %}
                 <div class="card-header py-3">
-                    <h2 style="text-align:center;">Le recomendamos estas ofertas profesionales basado en su perfil.</h2>
+                    <h2 style="text-align:center;">Ofertas recomendadas</h2>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -117,7 +117,7 @@
             {% if count2 == 0 %}
             {% else %}
                 <div class="card-header py-3">
-                    <h2 style="text-align:center;">También puede ver estas ofertas.</h2>
+                    <h2 style="text-align:center;">Otras ofertas</h2>
                 </div>
                 <div class="card-body">
                     {{ job_offer_not_recommended.count }}
@@ -202,8 +202,6 @@
 
         </div>
     </div>
-{% endblock %}
-{% block javaScript %}
     <script src="{% static 'src/js/jquery.dataTable.min.js' %}"></script>
     <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
     <script>
@@ -248,4 +246,7 @@
             {% endfor %}
         {% endif %}
     </script>
+{% endblock %}
+{% block javaScript %}
+
 {% endblock %}

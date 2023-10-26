@@ -17,7 +17,7 @@
         if (localStorage.getItem('text_message')) {
             let toast = {
                 title: "Correcto",
-                message: 'Perfil guardado satisfactoriamente.',
+                message:localStorage.getItem('text_message'),
                 status: TOAST_STATUS.SUCCESS,
                 timeout: 5000
             }
@@ -188,7 +188,7 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
-                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
+                        localStorage.setItem('text_message', 'Oferta guardada satisfactoriamente.');
                         window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
                     },
                     error: (data) => {
@@ -221,7 +221,7 @@
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
-                        localStorage.setItem('text_message', 'Guardado satisfactoriamente.');
+                        localStorage.setItem('text_message', 'Oferta Guardada satisfactoriamente.');
                         window.location.href = ("{% url 'add_job_offer_root' %}");
                     },
                     error: (data) => {

@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from scipy.optimize._tstutils import description
 
 from exam.models import Course
 from student.models import Student, Ability
@@ -8,10 +7,10 @@ from teacher.models import Teacher
 
 
 # Create your models here.
-class JobOffer(models.Model):
-    title = models.CharField(max_length=250, verbose_name="Título")
-    address = models.CharField(max_length=250, verbose_name="Dirección", null=True, blank=True)
-    description = models.TextField(max_length=150, verbose_name='Descripción', null=True, blank=True)
+class ProfessionalOffer(models.Model):
+    title = models.CharField(max_length=50, verbose_name="Título")
+    address = models.CharField(max_length=50, verbose_name="Dirección", null=True, blank=True)
+    description = models.TextField(max_length=250, verbose_name='Descripción', null=True, blank=True)
     modality = models.CharField(max_length=15,
                                 choices=[("Teletrabajo", "Teletrabajo"), ("Presencial", "Presencial"),
                                          ("Híbrido", "Híbrido")],

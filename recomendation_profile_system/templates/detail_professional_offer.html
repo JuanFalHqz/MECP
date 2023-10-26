@@ -9,7 +9,7 @@
         if (localStorage.getItem('text_message')) {
             let toast = {
                 title: "Correcto",
-                message: 'Perfil guardado satisfactoriamente.',
+                message: localStorage.getItem('text_message'),
                 status: TOAST_STATUS.SUCCESS,
                 timeout: 5000
             }
@@ -75,7 +75,7 @@
                         </p>
                     {% else %}
                         <div class="col-11 mx-auto">
-                            <h4 style="text-align:center;">Para este Perfil Profesional te recomendamos:</h4>
+                            <h4 style="text-align:center;">Perfiles recomendados</h4>
                             <div style="margin-left: 2%">
                                 <h6>
                                     Resultados con umbral de {{ umbral }}%
@@ -85,9 +85,7 @@
                                 <thead>
                                 <tr>
                                     <th>Imagen</th>
-                                    <th>Nombre</th>
-                                    <th>Dirección</th>
-                                    <th>Móvil</th>
+                                    <th>Datos del contacto</th>
                                     <th>Habilidades</th>
                                     <th>Similitud</th>
                                 </tr>
@@ -100,12 +98,15 @@
                                         </td>
                                         <td>
                                             {{ profile.profile.get_name }}
-                                        </td>
-                                        <td>
-                                            {{ profile.profile.address }}
-                                        </td>
-                                        <td>
-                                            {{ profile.profile.mobile }}
+                                            {% if profile.profile.mobile %}
+                                                - {{ profile.profile.mobile }}
+                                            {% endif %}
+                                            {% if profile.profile.user.email %}
+                                                - {{ profile.profile.user.email }}
+                                            {% endif %}
+                                            {% if profile.profile.address %}
+                                                - {{ profile.profile.address }}
+                                            {% endif %}
                                         </td>
                                         <td class="abilities_text">
                                             {% for ability in profile.profile.abilities.all %}
@@ -145,6 +146,7 @@
                         });
                     </script>
                 </div>
+                <br>
                 <div class="mb-3">
                     <a href="{% url 'list_job_offers_root' %}" class="btn btn-primary btn-sm" type="button">Listado de
                         ofertas</a>
@@ -152,8 +154,6 @@
                         oferta</a>
                     <a href="{% url 'update_job_offer_root' job_offer.id %}" class="btn btn-primary btn-sm ml-2">Modificar
                         oferta</a>
-                    <a href="{% url 'list_profiles_root' %}" class="btn btn-primary btn-sm" type="button">Listado de
-                        perfiles pofesionales</a>
 
                 </div>
             </div>

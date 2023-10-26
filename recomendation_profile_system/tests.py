@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.models import User, Group
 from django.test import TestCase
 
-from recomendation_profile_system.models import JobOffer, Settings
+from recomendation_profile_system.models import ProfessionalOffer, Settings
 from student.models import Student, Ability
 from teacher.models import Teacher
 
@@ -189,7 +189,7 @@ class AddAbilities(TestCase):
 
     Ability.objects.all().delete()
     Settings.objects.all().delete()
-    JobOffer.objects.all().delete()
+    ProfessionalOffer.objects.all().delete()
     User.objects.all().delete()
     Teacher.objects.all().delete()
     Student.objects.all().delete()
@@ -581,9 +581,9 @@ class AddJobOffer(TestCase):
     # 4 ofertas de trabajo
     abilities = Ability.objects.all()
     teachers = Teacher.objects.all()
-    job_offer = JobOffer.objects.create(modality='Presencial', address='La Habana',
-                                        title='Desarrollador full stack Laravel',
-                                        teacher=teachers.get(user__username='julio'), date=datetime.now().date())
+    job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='La Habana',
+                                                 title='Desarrollador full stack Laravel',
+                                                 teacher=teachers.get(user__username='julio'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Bootstrap'))
     job_offer.abilities.add(abilities.get(ability='HTML'))
@@ -594,9 +594,9 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='Apache'))
     job_offer.abilities.add(abilities.get(ability='Laravel'))
 
-    job_offer = JobOffer.objects.create(modality='Teletrabajo', address='',
-                                        title='Administrador de bases de datos',
-                                        teacher=teachers.get(user__username='julio'), date=datetime.now().date())
+    job_offer = ProfessionalOffer.objects.create(modality='Teletrabajo', address='',
+                                                 title='Administrador de bases de datos',
+                                                 teacher=teachers.get(user__username='julio'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='SQL'))
     job_offer.abilities.add(abilities.get(ability='MySql'))
     job_offer.abilities.add(abilities.get(ability='PostgreSQL'))
@@ -608,10 +608,10 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='Linux'))
     job_offer.abilities.add(abilities.get(ability='Scrum'))
 
-    job_offer = JobOffer.objects.create(modality='Presencial', address='Las Villas', title='Tester',
-                                        teacher=teachers.get(user__username='julio'),
-                                        description="Tester con alto nivel en PHP y Selenium",
-                                        date=datetime.now().date())
+    job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='Las Villas', title='Tester',
+                                                 teacher=teachers.get(user__username='julio'),
+                                                 description="Tester con alto nivel en PHP y Selenium",
+                                                 date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Pytest'))
     job_offer.abilities.add(abilities.get(ability='Selenium'))
     job_offer.abilities.add(abilities.get(ability='JUnit'))
@@ -621,8 +621,8 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='PHP'))
     job_offer.abilities.add(abilities.get(ability='Tester'))
 
-    job_offer = JobOffer.objects.create(modality='Presencial', address='Matanzas', title='Tester',
-                                        teacher=teachers.get(user__username='yoan'), date=datetime.now().date())
+    job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='Matanzas', title='Tester',
+                                                 teacher=teachers.get(user__username='yoan'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Angular'))
     job_offer.abilities.add(abilities.get(ability='HTML'))

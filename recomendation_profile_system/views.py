@@ -1,35 +1,36 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, ListView
 
 from recomendation_profile_system.forms import SettingsForm
-from recomendation_profile_system.models import JobOffer, Settings
+from recomendation_profile_system.models import ProfessionalOffer, Settings
 from recomendation_profile_system.view_ import Recommendation
 
 
-class ListOffertProfessionalByUserPreferences(ListView):
-    template_name = 'list_professional_offer_by_user_preferences.html'
-    model = JobOffer
+class ListOffertProfessionalByGraduateProfile(LoginRequiredMixin, ListView):
+    template_name = 'list_professional_offer_by_graduate_profile.html'
+    model = ProfessionalOffer
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        rpj = RecommendationProfessionalJobs(self.request.user.student)
-        list = rpj.get_recommended_by_user()
+        rpj = ProfessionalOffersRecommender(self.request.user.student)
+        list = rpj.get_recommendations_by_graduate()
         context['job_offer'] = list
         context['count'] = len(context['job_offer'])
 
         ids = []
         for e in list:
             ids.append(e['offer'].id)
-        ls = JobOffer.objects.all()
+        ls = ProfessionalOffer.objects.all()
         ls = [f for f in ls if f.pk not in ids]
         context['job_offer_not_recommended'] = ls
         context['count2'] = len(ls)
         return context
 
 
-class RecommendationProfessionalJobs:
+class ProfessionalOffersRecommender:
     """
     Obtener las ofertas profesionales rcomendadas basado en los datos del usuario
     requiere:
@@ -38,25 +39,25 @@ class RecommendationProfessionalJobs:
     retorna
         lista de perfiles
     """
-    job_offers = ''
-    student = ''
+    professional_offers = ''
+    graduate = ''
     setting = ''
 
     def __init__(self, student):
-        self.job_offers = JobOffer.objects.all()
-        self.student = student
+        self.professional_offers = ProfessionalOffer.objects.all()
+        self.graduate = student
         self.setting = Settings.objects.get(user_id=student.user.settings.pk)
 
-    def get_user_preferences_to_text(self):
+    def get_graduate_preferences_to_text(self):
         try:
-            return self.student.str_meta_data()
+            return self.graduate.str_meta_data()
         except Exception as e:
             e.__str__()
 
-    def get_job_offers_to_text(self):
+    def get_professional_offers_to_text(self):
         offers = []
         try:
-            for job in self.job_offers:
+            for job in self.professional_offers:
                 offers.append({
                     'id': job.pk,
                     'meta': job.str_meta_data()
@@ -65,20 +66,20 @@ class RecommendationProfessionalJobs:
         except Exception as e:
             e.__str__()
 
-    def get_recommended_by_user(self):
+    def get_recommendations_by_graduate(self):
         """
         Retorna una lista de ofertas de trabajo de acorde al umbral de similitud.
         """
         offers_recomendated = []
-        offers = self.get_job_offers_to_text()
-        user_preferences = self.get_user_preferences_to_text()
+        offers = self.get_professional_offers_to_text()
+        professional_profile = self.get_graduate_preferences_to_text()
         try:
             r = Recommendation()
             for offer in offers:
-                similarity = r.similarity(user_preferences, offer['meta'])
+                similarity = r.get_similarity(professional_profile, offer['meta'])
                 if similarity * 100 >= self.setting.relevance_umbral:
                     offers_recomendated.append({
-                        'offer': JobOffer.objects.get(pk=offer['id']),
+                        'offer': ProfessionalOffer.objects.get(pk=offer['id']),
                         'similarity': round(similarity * 100, 2)
                     })
             # ordenar y tomar según la cantidad
@@ -95,8 +96,8 @@ class RecommendationProfessionalJobs:
         return offers_recomendated
 
 
-class UpdateSettingsToUser(UpdateView):
-    template_name = 'setting_to_user.html'
+class UpdateSettingsForGraduate(UpdateView):
+    template_name = 'setting_for_graduate_user.html'
     model = Settings
     form_class = SettingsForm
     success_url = reverse_lazy('list_job_offers_by_user_preferences_root')

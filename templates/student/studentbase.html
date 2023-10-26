@@ -199,7 +199,7 @@
     <a href="/student/student-marks"><i class="fas fa-sort-numeric-up"></i><span>Mis notas</span></a>
     <div class="text-center" style="color: white; font-weight: bold"> Ofertas profesionales</div>
     <a href="{% url 'list_job_offers_by_user_preferences_root' %}"><i
-            class="fas fa-list"></i><span> Listado de Ofertas</span></a>
+            class="fas fa-list"></i><span> Listar Ofertas</span></a>
     <a href="{% url 'settings_root_student' request.user.settings.pk %}"><i class="fas fa-cog"></i><span> Ajustes</span></a>
 
 </div>
@@ -209,6 +209,7 @@
 <!--content start-->
 <div class="content">
     <br><br><br><br><br>
+    <script src="{% static 'libs/toaster/js/bootstrap-toaster.js' %}"></script>
     {% block content %}
 
     {% endblock content %}
@@ -218,7 +219,6 @@
     {% include "exam/footer.html" %}
 </div>
 <!--content end-->
-<script src="{% static 'libs/toaster/js/bootstrap-toaster.js' %}"></script>
 {% block javaScript %}
 
 {% endblock %}
