@@ -1,0 +1,145 @@
+{% extends 'teacher/teacherbase.html' %}
+{% load static %}
+{% block content %}
+    <head>
+        <style>
+            label > strong {
+                color: #3a3b45;
+            }
+
+            .error {
+                color: rgba(255, 24, 24, 0.78);
+            }
+        </style>
+    </head>
+    <div class="justify-content-center col-md-6 col-sm-4 m-auto">
+        <h2 style="text-align:center;">Modificar Contenido</h2>
+        <form>
+            <div class="mb-3">
+                <label class="form-label" for="title">
+                    <strong>Título</strong>
+                </label>
+                <input class="form-control" type="text" id="title" placeholder="Título del contenido"
+                       name="title" required value="{{ contenido.titulo }}">
+                <div class="error" id="title-error">
+
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">
+                    <strong>Descripción</strong>
+                </label>
+                <textarea class="form-control" id="description" placeholder="Descripción del contenido"
+                       name="description" required>{{ contenido.descripcion }}</textarea>
+                <div class="error" id="description-error">
+
+                </div>
+            </div>
+
+            <div class="dropdown bootstrap-select show-tick form-control mb-3">
+                <label class="form-label" for="abilities">
+                    <strong>Habilidades</strong>
+                </label>
+                <select id="select-abilities" class="selectpicker" multiple="" aria-label="Default select example"
+                        data-live-search="true"
+                        name="abilities" id="abilities"
+                        tabindex="null"
+                        required>
+                    {% for ability in abilities %}
+                        <option value="{{ ability.pk }}">{{ ability }}</option>
+                    {% endfor %}
+                </select>
+                <div class="error" id="abilities-error">
+                </div>
+            </div>
+            <div class="mb-3 d-flex">
+                <div class="col-6">
+                    <button class="btn btn-primary" id="btn-update-contenido" type="button">Modificar</button>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <a href="javascript:window.history.back()" class="ml-2 btn btn-secondary " id="btn-cancel"
+                       type="button">
+                        Cancelar
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Load abilities select
+        function load_select() {
+            let select = document.querySelector('#select-abilities');
+            let options = Array.from(select.options)
+            {% for ability in abilities_select %}
+                options.find(i => i.text === '{{ ability }}').selected = true;
+            {% endfor %}
+        }
+
+        load_select();
+
+        // Validations
+        function title_is_valid() {
+            if ($('#title').val().trim() == '') {
+                $('#title-error').text("Escriba el título");
+                return false;
+            }
+            $('#title-error').text("");
+            return true;
+        }
+
+        function description_is_valid() {
+            if ($('#description').val().trim() == '') {
+                $('#description-error').text("Escriba la descripción");
+                return false;
+            }
+            $('#description-error').text("");
+            return true;
+        }
+
+        function abilities_is_valid() {
+            if ($('.filter-option-inner-inner').text() == 'Seleccione al menos una habilidad') {
+                $('#abilities-error').text("Seleccione al menos una habilidad");
+                return false;
+            }
+            $('#abilities-error').text("");
+            return true;
+        }
+
+        function all_is_valid() {
+            let a = title_is_valid();
+            let b = description_is_valid();
+            let c = abilities_is_valid();
+            return a && b && c;
+        }
+
+        // Handle form submission
+        $('#btn-update-contenido').on('click', () => {
+            if (all_is_valid()) {
+                let title = $('#title').val().trim();
+                let description = $('#description').val().trim();
+                let abilities = $("#select-abilities").val();
+                let datas = {
+                    'pk': {{ contenido.pk }},
+                    'title': title,
+                    'description': description,
+                    'abilities': abilities
+                };
+                $.ajax({
+                    url: '{{ root }}',
+                    type: "post",
+                    data: datas,
+                    dataType: 'json',
+                    success: (data) => {
+                        localStorage.setItem('text_message', 'Contenido modificado satisfactoriamente.');
+                        window.location.href = ("{% url 'detail_contenido_teacher' 1 %}".replaceAll('1', data.pk));
+                    },
+                    error: (data) => {
+                        alert(data);
+                        console.log(data);
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

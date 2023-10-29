@@ -1,0 +1,64 @@
+{% extends 'student/studentbase.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="col-sm-10 col-md-10 m-auto">
+        <div class="card shadow mb-3">
+            <div class="card-header py-3">
+                <h2 style="text-align: center;">Contenidos Disponibles</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <table id="content-table" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Archivo</th>
+                                <th>Habilidades</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contenido in contenidos %}
+                                <tr>
+                                    <td>{{ contenido.titulo }}</td>
+                                    <td>
+                                        <a href="{{ contenido.content.url }}" target="_blank">Ver Archivo</a>
+                                    </td>
+                                    <td>
+                                        {% for ability in contenido.abilities.all %}
+                                            {{ ability }}
+                                        {% empty %}
+                                            No se han especificado habilidades
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ contenido.descripcion }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" style="text-align:center;">No existen contenidos disponibles.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'src/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#content-table').DataTable({
+                language: {
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ contenidos',
+                    infoEmpty: 'No existen contenidos a mostrar',
+                    infoFiltered: '(filtrados de _MAX_ contenidos en total)',
+                    lengthMenu: 'Mostrar _MENU_ contenidos por página',
+                    zeroRecords: 'No se encontraron contenidos',
+                }
+            });
+        });
+    </script>
+{% endblock %}

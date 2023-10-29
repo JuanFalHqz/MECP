@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4">Agregar Contenido</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="titulo" class="form-label"><strong>Título</strong></label>
+            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Título del contenido" required>
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label"><strong>Descripción</strong></label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripción del contenido" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label"><strong>Archivo</strong></label>
+            <input type="file" class="form-control" id="content" name="content" accept=".pdf, .doc, .docx, .txt" required>
+        </div>
+        <div class="mb-3">
+            <label for="abilities" class="form-label"><strong>Habilidades</strong></label>
+            <select class="form-select" id="abilities" name="abilities" multiple>
+                {% for ability in abilities %}
+                <option value="{{ ability.pk }}">{{ ability }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="curses" class="form-label"><strong>Cursos relacionados</strong></label>
+            <select class="form-select" id="curses" name="curses" multiple>
+                {% for course in curses %}
+                <option value="{{ course.pk }}">{{ course }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Guardar Contenido</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

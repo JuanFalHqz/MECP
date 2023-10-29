@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5 mb-4">Detalle del Contenido</h2>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <h2 style="text-align:center;">{{ contenido.titulo }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Título: </strong></label>
+                        {{ contenido.titulo }}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Descripción: </strong></label>
+                        {{ contenido.descripcion }}
+                    </div>
+
+                    <div class="mb-2 abilities_text">
+                        <label class="form-label"><strong>Habilidades: </strong></label>
+                        {% for ability in contenido.abilities.all %}
+                            {{ ability }},
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-2 courses_text">
+                        <label class="form-label"><strong>Cursos Relacionados: </strong></label>
+                        {% for course in contenido.curses.all %}
+                            {{ course }},
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label"><strong>Archivo: </strong></label>
+                        <a href="{{ contenido.content.url }}" target="_blank">Ver archivo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <a href="{% url 'update_contenido' contenido.id %}" class="btn btn-primary btn-sm" type="button">Modificar Contenido</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
