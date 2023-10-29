@@ -19,4 +19,5 @@ urlpatterns = [
     path('update-student/<int:pk>', views.update_student_view, name='update'),
 
     path('manage_job/', include('recomendation_profile_system.urls')),
+    path('manage_content/', include('recomendation_content_system.urls')),
 ]

@@ -15,9 +15,10 @@ from recomendation_content_system.forms import ContenidoForm
 from recomendation_content_system.models import Contenido
 from student.models import Ability, Student
 
+
 # Clases de Contenidos
 
-class list_contenidos(LoginRequiredMixin, ListView):
+class ListContent(LoginRequiredMixin, ListView):
     template_name = 'list_contenidos.html'
     model = Contenido
 
@@ -25,4 +26,3 @@ class list_contenidos(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['contenido'] = Contenido.objects.all()
         return context
-
