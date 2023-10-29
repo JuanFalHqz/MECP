@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -58,8 +59,6 @@ class DetailProfessionalOffer(LoginRequiredMixin, TemplateView):
             if is_student(request.user):
                 self.template_name = 'detail_professional_offer_to_studet.html'
                 return self.render_to_response(context)
-            x = ProfessionalOffer.objects.get(id=context['pk'])
-            y = x.abilities.all()
             #
             rppjo = ProfessionalProfileRecommender(self.request.user.teacher)
             context['data'] = rppjo.get_recommendations_by_offer(context['pk'])
@@ -139,8 +138,7 @@ class ProfessionalProfileRecommender:
         self.professional_offer = ProfessionalOffer.objects.filter(teacher=teacher)
         self.professional_profiles = Student.objects.all()
         self.teacher = teacher
-        self.professional_profiles = Student.objects.all()
-        self.setting = Settings.objects.get(user_id=teacher.user.settings.pk)
+        self.setting = Settings.objects.get(pk=teacher.user.settings.pk)
 
     def get_professional_offer_text(self):
         list = []
@@ -249,6 +247,7 @@ class UpdateSettings(LoginRequiredMixin, UpdateView):
         return render(request, self.template_name, data)
 
 
+@login_required(login_url='adminlogin')
 def add_professional_offer(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -268,8 +267,9 @@ def add_professional_offer(request):
             return JsonResponse('Seleccione al menos una habilidad', 300)
         # Save
         try:
-            job_offer = ProfessionalOffer.objects.create(title=title, address=address, teacher=teacher, modality=modality,
-                                                         description=description, date=datetime.now().date())
+            job_offer = ProfessionalOffer.objects.create(title=title, address=address, teacher=teacher,
+                                                         modality=modality, description=description,
+                                                         date=datetime.now().date())
             for ability_pk in abilities:
                 job_offer.abilities.add(ability_pk)
             return JsonResponse({'pk': job_offer.pk}, status=201)
@@ -277,6 +277,7 @@ def add_professional_offer(request):
             e.__str__()
 
 
+@login_required(login_url='adminlogin')
 def update_professional_offer(request):
     if request.method == 'POST':
         title = request.POST.get('title')
