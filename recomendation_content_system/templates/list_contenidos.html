@@ -1,64 +1,111 @@
 {% extends 'student/studentbase.html' %}
 {% load static %}
-
+{% load widget_tweaks %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'src/css/dataTables.bootstrap5.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/sweetalert2/css/sweetalert2.min.css' %}">
+    <script src="{% static 'libs/sweetalert2/js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'src/js/delete_functions.js' %}"></script>
+{% endblock %}
 {% block content %}
     <div class="col-sm-10 col-md-10 m-auto">
         <div class="card shadow mb-3">
             <div class="card-header py-3">
-                <h2 style="text-align: center;">Contenidos Disponibles</h2>
+                <h2 style="text-align:center;">Listado de contenidos disponibles</h2>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <table id="content-table" class="table table-striped" style="width:100%">
+                    <table id="example" class="table table-striped" style="width:100%">
                         <thead>
-                            <tr>
-                                <th>Título</th>
-                                <th>Archivo</th>
-                                <th>Habilidades</th>
-                                <th>Descripción</th>
-                            </tr>
+                        <tr>
+                            <th scope="col" style="width:min-content;">
+                                <input type="checkbox" name="all-elements" id="all-elements">
+                            </th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Habilidades</th>
+                            <th>Opciones</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {% for contenido in contenidos %}
-                                <tr>
-                                    <td>{{ contenido.titulo }}</td>
-                                    <td>
-                                        <a href="{{ contenido.content.url }}" target="_blank">Ver Archivo</a>
-                                    </td>
-                                    <td>
-                                        {% for ability in contenido.abilities.all %}
-                                            {{ ability }}
-                                        {% empty %}
-                                            No se han especificado habilidades
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ contenido.descripcion }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="4" style="text-align:center;">No existen contenidos disponibles.</td>
-                                </tr>
-                            {% endfor %}
+                        {% for Contenido in contenido_list %}
+                            <tr id="row-{{ Contenido.id }}">
+                                <td>
+                                    <input type="checkbox" name="select" value="{{ job.pk }}" class="checkbox">
+                                </td>
+                                <td>{{ Contenido.titulo }}</td>
+                                <td>{{ Contenido.descripcion }}</td>
+                                <td id="td_abilities" class="abilities_text">
+                                    {% for ability in Contenido.abilities.all %}
+                                        {{ ability }},
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <!-- Example single danger button -->
+                                    <div class="btn-group">
+                                    <a href="{% url 'detail_contenido_to_student' Contenido.id %}" class="btn btn-primary btn-sm" type="button">Mostrar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>Título</th>
+                            <th>Descripción</th>
+                            <th>Habilidades</th>
+                            <th>Opciones</th>
+                        </tr>
+                        </tfoot>
                     </table>
+                    {% block javaScript %}
+                        <script src="{% static 'src/js/jquery.dataTable.min.js' %}"></script>
+                        <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
+                    {% endblock %}
+                    <script>
+                        new DataTable('#example', {
+                            language: {
+                                info: 'Mostrando página _PAGE_ de _PAGES_',
+                                infoEmpty: 'No existen registros a mostrar',
+                                infoFiltered: '(Buscado de _MAX_ registros total)',
+                                lengthMenu: 'Mostrar _MENU_ registros por página',
+                                zeroRecords: 'No existen registros - lo sentimos'
+                            }
+                        });
+                        // elimina la última coma de las habilidades
+                        arr = $(".abilities_text")
+                        for (let arrElement of arr) {
+                            arrElement.textContent = arrElement.textContent.trim().slice(0, -1)
+                        }
+
+                        // Mostrar los mensajes
+                        {% if messages %}
+                            {% for message in messages %}
+                                if ("{{ message.tags }}" == "success") {
+                                    let toast = {
+                                        title: "Correcto",
+                                        message: '{{ message }}',
+                                        status: TOAST_STATUS.SUCCESS,
+                                        timeout: 5000
+                                    }
+                                    Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+                                    Toast.setTheme(TOAST_THEME.LIGHT);
+                                    Toast.create(toast);
+                                }
+                            {% endfor %}
+                        {% endif %}
+                    </script>
                 </div>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modal-delete" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-    <script src="{% static 'src/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
-    <script>
-        $(document).ready(function() {
-            $('#content-table').DataTable({
-                language: {
-                    info: 'Mostrando _START_ a _END_ de _TOTAL_ contenidos',
-                    infoEmpty: 'No existen contenidos a mostrar',
-                    infoFiltered: '(filtrados de _MAX_ contenidos en total)',
-                    lengthMenu: 'Mostrar _MENU_ contenidos por página',
-                    zeroRecords: 'No se encontraron contenidos',
-                }
-            });
-        });
-    </script>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
 {% endblock %}

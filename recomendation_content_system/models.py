@@ -12,3 +12,12 @@ class Contenido (models.Model):
     curses = models.ManyToManyField(Course)
     descripcion = models.TextField(verbose_name="Descripción")
 
+    def str_meta_data(self):
+        text = ' '
+        text += self.titulo
+        if self.descripcion is not None and self.descripcion != '':
+            text += self.descripcion
+        for ability in self.abilities.all():
+            text += ' '
+            text += ability.ability
+        return text

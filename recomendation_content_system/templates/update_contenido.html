@@ -13,29 +13,44 @@
         </style>
     </head>
     <div class="justify-content-center col-md-6 col-sm-4 m-auto">
-        <h2 style="text-align:center;">Modificar Contenido</h2>
+        <h2 style="text-align:center;">Modificar Oferta Profesional</h2>
         <form>
             <div class="mb-3">
                 <label class="form-label" for="title">
                     <strong>Título</strong>
                 </label>
-                <input class="form-control" type="text" id="title" placeholder="Título del contenido"
-                       name="title" required value="{{ contenido.titulo }}">
+                <input class="form-control" type="text" id="title" placeholder="Desarrollador backend java"
+                       name="title" required value="{{ job_offer.title }}">
                 <div class="error" id="title-error">
 
                 </div>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="description">
-                    <strong>Descripción</strong>
+                <label class="form-label" for="modality">
+                    <strong>Modaldiad</strong>
                 </label>
-                <textarea class="form-control" id="description" placeholder="Descripción del contenido"
-                       name="description" required>{{ contenido.descripcion }}</textarea>
-                <div class="error" id="description-error">
+                <select id="select-modality" class="form-select form-select-md" aria-label=".form-select-md"
+                        name="modality" id="modality"
+                        required>
+                    {% for modality in modalities %}
+                        <option value="{{ modality }}">{{ modality }}</option>
+                    {% endfor %}
+                </select>
+                <div class="error" id="modality-error">
 
                 </div>
             </div>
 
+            <div class="mb-3" id="address-panel">
+                <label class="form-label" for="address">
+                    <strong>Dirección</strong>
+                </label>
+                <input class="form-control" type="text" id="address" placeholder="Sunset Blvd, 38" name="address"
+                       required value="{{ job_offer.address }}">
+                <div class="error" id="address-error">
+
+                </div>
+            </div>
             <div class="dropdown bootstrap-select show-tick form-control mb-3">
                 <label class="form-label" for="abilities">
                     <strong>Habilidades</strong>
@@ -50,14 +65,23 @@
                     {% endfor %}
                 </select>
                 <div class="error" id="abilities-error">
+
                 </div>
+            </div>
+            <div class="mb-3" id="description-panel">
+                <label class="form-label" for="description">
+                    <strong>Descripción</strong>
+                </label>
+                <textarea id="description" class="form-control" id="description">{% if job_offer.description != None %}
+                    {{ job_offer.description }}{% endif %}
+                </textarea>
             </div>
             <div class="mb-3 d-flex">
                 <div class="col-6">
-                    <button class="btn btn-primary" id="btn-update-contenido" type="button">Modificar</button>
+                    <button class="btn btn-primary" id="btn-update-job-offer" type="button">Modificar</button>
                 </div>
                 <div class="col-6 d-flex justify-content-end">
-                    <a href="javascript:window.history.back()" class="ml-2 btn btn-secondary " id="btn-cancel"
+                    <a href="javascript:window.history.back()" class="ml-2 btn btn-secondary " id="btn-add-again"
                        type="button">
                         Cancelar
                     </a>
@@ -66,35 +90,61 @@
         </form>
     </div>
 
+
     <script>
-        // Load abilities select
+        //Properties initial
+        {% if job_offer.modality == 'Teletrabajo' %}
+            $('#address-panel').hide();
+        {% endif %}
+        $("#description").text($("#description").text().trim())
+
         function load_select() {
+            //cargar los datos del select
             let select = document.querySelector('#select-abilities');
             let options = Array.from(select.options)
             {% for ability in abilities_select %}
                 options.find(i => i.text === '{{ ability }}').selected = true;
             {% endfor %}
+
         }
 
-        load_select();
+        function load_modality_select() {
+            //cargar los datos del select
+            let select = document.querySelector('#select-modality');
+            let options = Array.from(select.options)
+            options.find(i => i.text === '{{ job_offer.modality }}').selected = true;
 
-        // Validations
+        }
+
+        load_select()
+        load_modality_select()
+
+        //validations.
         function title_is_valid() {
             if ($('#title').val().trim() == '') {
                 $('#title-error').text("Escriba el título");
                 return false;
             }
             $('#title-error').text("");
-            return true;
+            return true
         }
 
-        function description_is_valid() {
-            if ($('#description').val().trim() == '') {
-                $('#description-error').text("Escriba la descripción");
+        function address_is_valid() {
+            if ($('#address').val().trim() == '') {
+                $('#address-error').text("Escriba la dirección");
                 return false;
             }
-            $('#description-error').text("");
-            return true;
+            $('#address-error').text("");
+            return true
+        }
+
+        function modality_is_valid() {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                return address_is_valid();
+            } else {
+                $('#address').val('');
+                return true;
+            }
         }
 
         function abilities_is_valid() {
@@ -103,43 +153,62 @@
                 return false;
             }
             $('#abilities-error').text("");
-            return true;
+            return true
         }
 
         function all_is_valid() {
-            let a = title_is_valid();
-            let b = description_is_valid();
-            let c = abilities_is_valid();
+            let a = title_is_valid()
+            let b = modality_is_valid()
+            let c = abilities_is_valid()
             return a && b && c;
         }
 
-        // Handle form submission
-        $('#btn-update-contenido').on('click', () => {
+        $('#select-modality').on('change', () => {
+            if ($('#select-modality').val() == 'Presencial' || $('#select-modality').val() == 'Híbrido') {
+                $('#address-panel').show()
+            } else {
+                $('#address').val('')
+                $('#address-panel').hide()
+            }
+        })
+        // Guarda la oferta de trabajo si es válida la enrada.
+        $('#btn-update-job-offer').on('click', () => {
             if (all_is_valid()) {
+
                 let title = $('#title').val().trim();
-                let description = $('#description').val().trim();
+                let modality = $('#select-modality').val();
+                let address = $('#address').val().trim();
                 let abilities = $("#select-abilities").val();
+                let description = $("#description").val().trim();
                 let datas = {
-                    'pk': {{ contenido.pk }},
+                    'pk':{{ job_offer.pk }},
                     'title': title,
-                    'description': description,
-                    'abilities': abilities
-                };
+                    'modality': modality,
+                    'address': address,
+                    'abilities': abilities,
+                    'description': description
+                }
+                console.log(datas)
                 $.ajax({
                     url: '{{ root }}',
                     type: "post",
                     data: datas,
                     dataType: 'json',
                     success: (data) => {
-                        localStorage.setItem('text_message', 'Contenido modificado satisfactoriamente.');
-                        window.location.href = ("{% url 'detail_contenido_teacher' 1 %}".replaceAll('1', data.pk));
+                        localStorage.setItem('text_message', 'Oferta modificada satisfactoriamente.');
+                        window.location.href = ("{% url 'detail_job_offer_root' 1 %}".replaceAll('1', data.pk));
                     },
                     error: (data) => {
                         alert(data);
                         console.log(data);
                     }
-                });
+                })
             }
-        });
+        })
+
+        // renderizado de componentes
+        document.addEventListener('readystatechange', () => {
+            $('.dropdown').addClass('form-control');
+        })
     </script>
 {% endblock %}

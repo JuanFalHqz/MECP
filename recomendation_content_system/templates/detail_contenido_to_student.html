@@ -1,49 +1,156 @@
 {% extends 'student/studentbase.html' %}
 {% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'src/css/dataTables.bootstrap5.min.css' %}">
+{% endblock %}
 {% block content %}
-    <div class="container">
-        <h2 class="mt-5 mb-4">Detalle del Contenido</h2>
+    <script>
+        // Notification Load
+        if (localStorage.getItem('text_message')) {
+            let toast = {
+                title: "Correcto",
+                message: localStorage.getItem('text_message'),
+                status: TOAST_STATUS.SUCCESS,
+                timeout: 5000
+            }
+            Toast.setPlacement(TOAST_PLACEMENT.TOP_RIGHT);
+            Toast.setTheme(TOAST_THEME.LIGHT);
+            Toast.create(toast);
+            localStorage.removeItem('text_message');
+        }
+    </script>
+    <div class="col-sm-10 col-md-10 m-auto">
         <div class="card shadow mb-3">
             <div class="card-header py-3">
-                <h2 style="text-align:center;">{{ contenido.titulo }}</h2>
+                <h2 style="text-align:center;">Contenidos {{ content.title }}</h2>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col">
                         <div class="mb-2">
-                            <label class="form-label"><strong>Título: </strong></label>
-                            {{ contenido.titulo }}
+                            <label class="form-label" for="username">
+                                <strong>Título: </strong>
+                            </label>
+                            {{ content.titulo }}
                         </div>
-
                         <div class="mb-2">
-                            <label class="form-label"><strong>Descripción: </strong></label>
-                            {{ contenido.descripcion }}
+                            <label class="form-label" for="username">
+                                <strong>Archivo: </strong>
+                            </label>
+                            {{ content.content }}
                         </div>
-
                         <div class="mb-2 abilities_text">
-                            <label class="form-label"><strong>Habilidades: </strong></label>
-                            {% for ability in contenido.abilities.all %}
+                            <label class="form-label" for="email">
+                                <strong>Habilidades: </strong>
+                            </label>
+                            {% for ability in content.abilities.all %}
                                 {{ ability }},
                             {% endfor %}
                         </div>
-
-                        <div class="mb-2 courses_text">
-                            <label class="form-label"><strong>Cursos Relacionados: </strong></label>
-                            {% for course in contenido.curses.all %}
-                                {{ course }},
-                            {% endfor %}
-                        </div>
-
                         <div class="mb-2">
-                            <label class="form-label"><strong>Archivo: </strong></label>
-                            <a href="{{ contenido.content.url }}" target="_blank">Ver archivo</a>
+                            <label class="form-label" for="username">
+                                <strong>Descripción: </strong>
+                            </label>
+                            {{ content.descripcion }}
                         </div>
+
                     </div>
                 </div>
-                <div class="mb-3">
-                    <a href="javascript:window.history.back()" class="btn btn-primary btn-sm" type="button">Regresar</a>
+
+                <div class="col-12">
+                    {% if count == 0 %}
+                        <p style="text-align:center;">No existen contenidos para
+                            recomendar. Asegúrese de
+                            que la cantidad de elementos a mostrar sea distinta de 0. Para esto haga
+                            click en este link <a href="{% url 'settings_root' request.user.settings.pk %}">
+                                Ajustes </a>.
+                        </p>
+                    {% else %}
+                        <div class="col-11 mx-auto">
+                            <h4 style="text-align:center;">Contenidos recomendados</h4>
+                            <div style="margin-left: 2%">
+                                <h6>
+                                    Resultados con umbral de {{ umbral }}%
+                                </h6>
+                            </div>
+                            <table id="example" class="table table-striped mx-auto" style="margin-bottom: 25px;">
+                                <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Descripción</th>
+                                    <th>Habilidades</th>
+                                    <!--
+                                    <th>Similitud</th>
+                                    -->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for profile in data %}
+                                    <tr>
+                                        <td>
+                                            <img src="{% static profile.profile.profile_pic %}" width="25" height="25">
+                                        </td>
+                                        <td>
+                                            {{ profile.profile.get_name }}
+                                            {% if profile.profile.mobile %}
+                                                - {{ profile.profile.mobile }}
+                                            {% endif %}
+                                            {% if profile.profile.user.email %}
+                                                - {{ profile.profile.user.email }}
+                                            {% endif %}
+                                            {% if profile.profile.address %}
+                                                - {{ profile.profile.address }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="abilities_text">
+                                            {% for ability in profile.profile.abilities.all %}
+                                                {{ ability }},
+                                            {% endfor %}
+                                        </td>
+                                        <!--
+                                        <td>
+                                            {% if profile.similarity >= 95 %}
+                                                <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
+                                            {% elif profile.similarity < 95 and profile.similarity > 80 %}
+                                                <span class="float-right badge bg-info">{{ profile.similarity }} %</span>
+                                            {% elif profile.similarity <= 80 and profile.similarity > 60 %}
+                                                <span class="float-right badge bg-success">{{ profile.similarity }} %</span>
+                                            {% elif profile.similarity <= 60 and profile.similarity > 50 %}
+                                                <span class="float-right badge bg-warning">{{ profile.similarity }} %</span>
+                                            {% elif profile.similarity <= 50 %}
+                                                <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
+                                            {% endif %}
+                                        </td>
+                                        -->
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                    <script src="{% static 'src/js/jquery.dataTable.min.js' %}"></script>
+                    <script src="{% static 'src/js/dataTables.bootstrap5.min.js' %}"></script>
+                    <script>
+                        new DataTable('#example', {
+                            language: {
+                                info: 'Mostrando página _PAGE_ de _PAGES_',
+                                infoEmpty: 'No existen registros a mostrar',
+                                infoFiltered: '(Buscado de _MAX_ registros total)',
+                                lengthMenu: 'Mostrar _MENU_ registros por página',
+                                zeroRecords: 'No existen registros - lo sentimos'
+                            }
+                        });
+                    </script>
                 </div>
+                <br>
             </div>
         </div>
     </div>
+    <script>
+        // elimina la última coma de las habilidades
+        arr = $(".abilities_text")
+        for (let arrElement of arr) {
+            arrElement.innerHTML = arrElement.innerHTML.trim().slice(0, -1)
+        }
+    </script>
 {% endblock %}
