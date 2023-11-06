@@ -32,6 +32,7 @@ class AddAbilities(TestCase):
     abilities.append('SQLite')
     abilities.append('Redis')
     abilities.append('MongoDB')
+    abilities.append('Oracle')
     abilities.append('AWS RDS')
     #     Programación:
     abilities.append('Python')
@@ -185,11 +186,6 @@ class AddAbilities(TestCase):
     abilities.append('AUP UCI')
     # Rolls
     abilities.append('Tester')
-    abilities.append('Developer')
-    abilities.append('Project manager')
-    abilities.append('Desarrollador de software')
-    abilities.append('Analista')
-    abilities.append('Diseñador')
 
     Ability.objects.all().delete()
     Settings.objects.all().delete()
@@ -337,87 +333,105 @@ class AddStudent(TestCase):
     student = Student.objects.create(user=users.get(username='yoel'), address="La Habana",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='54545454', )
-    student.abilities.add(a.get(ability='Laravel'))
-    student.abilities.add(a.get(ability='PHP'))
-    student.abilities.add(a.get(ability='HTML'))
-    student.abilities.add(a.get(ability='JavaScript'))
-    student.abilities.add(a.get(ability='CSS'))
-    student.abilities.add(a.get(ability='Bootstrap'))
+    student.abilities.add(a.get(ability='Diseño'))
+    student.abilities.add(a.get(ability='Python'))
+    student.abilities.add(a.get(ability='Django'))
+    student.abilities.add(a.get(ability='Flask'))
+    student.abilities.add(a.get(ability='Amazon Web Services (AWS)'))
+    student.abilities.add(a.get(ability='Docker'))
+    student.abilities.add(a.get(ability='Https'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='yoel'))
 
     student = Student.objects.create(user=users.get(username='heidys'), address="Mayabeque",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='54543232', )
-    student.abilities.add(a.get(ability='SQL'))
-    student.abilities.add(a.get(ability='MySql'))
-    student.abilities.add(a.get(ability='PostgreSQL'))
-    student.abilities.add(a.get(ability='SQLite'))
-    student.abilities.add(a.get(ability='Git'))
-    student.abilities.add(a.get(ability='Scrum'))
-    my_student_group = Group.objects.get_or_create(name='STUDENT')
-    my_student_group[0].user_set.add(users.get(username='heidys'))
-
-    student = Student.objects.create(user=users.get(username='carlos'), address="Las Villas",
-                                     profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
-                                     mobile='58099009', )
-    student.abilities.add(a.get(ability='Pytest'))
-    student.abilities.add(a.get(ability='Selenium'))
+    student.abilities.add(a.get(ability='Diseño'))
+    student.abilities.add(a.get(ability='Bootstrap'))
     student.abilities.add(a.get(ability='HTML'))
     student.abilities.add(a.get(ability='CSS'))
     student.abilities.add(a.get(ability='JavaScript'))
-    student.abilities.add(a.get(ability='JUnit'))
-    student.abilities.add(a.get(ability='Python'))
+    student.abilities.add(a.get(ability='PHP'))
+    student.abilities.add(a.get(ability='Sass'))
+    student.abilities.add(a.get(ability='Apache'))
+    student.abilities.add(a.get(ability='Laravel'))
+    my_student_group = Group.objects.get_or_create(name='STUDENT')
+    my_student_group[0].user_set.add(users.get(username='heidys'))
+
+    student = Student.objects.create(user=users.get(username='carlos'), address="Matanzas",
+                                     profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
+                                     mobile='58099009', )
+    student.abilities.add(a.get(ability='Java'))
+    student.abilities.add(a.get(ability='PHP'))
+    student.abilities.add(a.get(ability='HTML'))
+    student.abilities.add(a.get(ability='CSS'))
+    student.abilities.add(a.get(ability='JavaScript'))
+    student.abilities.add(a.get(ability='Symfony'))
+    student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='Nginx'))
+    student.abilities.add(a.get(ability='Laravel'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='carlos'))
 
     student = Student.objects.create(user=users.get(username='luis'), address="Matanzas",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='56464343', )
-    student.abilities.add(a.get(ability='Angular'))
-    student.abilities.add(a.get(ability='JSON'))
+    student.abilities.add(a.get(ability='Java'))
+    student.abilities.add(a.get(ability='PHP'))
     student.abilities.add(a.get(ability='HTML'))
     student.abilities.add(a.get(ability='CSS'))
     student.abilities.add(a.get(ability='JavaScript'))
-    student.abilities.add(a.get(ability='Node.js'))
-    student.abilities.add(a.get(ability='Scrum'))
+    student.abilities.add(a.get(ability='Symfony'))
+    student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='Nginx'))
+    student.abilities.add(a.get(ability='Laravel'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='luis'))
 
     student = Student.objects.create(user=users.get(username='mariem'), address="La Habana",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='56445640', )
-    student.abilities.add(a.get(ability='Python'))
-    student.abilities.add(a.get(ability='SQL'))
-    student.abilities.add(a.get(ability='PostgreSQL'))
-    student.abilities.add(a.get(ability='Django'))
-    student.abilities.add(a.get(ability='Flask'))
-    student.abilities.add(a.get(ability='Scrum'))
+    student.abilities.add(a.get(ability='Java'))
+    student.abilities.add(a.get(ability='Kotlin'))
+    student.abilities.add(a.get(ability='XML'))
+    student.abilities.add(a.get(ability='Diseño UI UX'))
+    student.abilities.add(a.get(ability='JavaScript'))
+    student.abilities.add(a.get(ability='Flutter'))
     student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='JSON'))
+    student.abilities.add(a.get(ability='Scrum'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='mariem'))
 
-    """student = Student.objects.create(user=users.get(username='jose_ricardo'), address="La Habana",
+    student = Student.objects.create(user=users.get(username='jose_ricardo'), address="Matanzas",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='59687967', )
-    student.abilities.add(a.get(ability='Symfony'))
+    student.abilities.add(a.get(ability='SQL'))
     student.abilities.add(a.get(ability='MySql'))
-    student.abilities.add(a.get(ability='JavaScript'))
-    student.abilities.add(a.get(ability='HTML'))
-    student.abilities.add(a.get(ability='CSS'))
-    student.abilities.add(a.get(ability='JavaScript'))
-    student.abilities.add(a.get(ability='Bootstrap'))
+    student.abilities.add(a.get(ability='PostgreSQL'))
+    student.abilities.add(a.get(ability='SQLite'))
+    student.abilities.add(a.get(ability='SQLite'))
+    student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='Apache'))
+    student.abilities.add(a.get(ability='Nginx'))
+    student.abilities.add(a.get(ability='Linux'))
+    student.abilities.add(a.get(ability='Scrum'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='jose_ricardo'))
-    """
+
     student = Student.objects.create(user=users.get(username='jonathan'), address="Pinar del Río",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='56765543', )
-    student.abilities.add(a.get(ability='SQL'))
+    student.abilities.add(a.get(ability='Diseño'))
+    student.abilities.add(a.get(ability='Bootstrap'))
     student.abilities.add(a.get(ability='PostgreSQL'))
-    student.abilities.add(a.get(ability='MySql'))
+    student.abilities.add(a.get(ability='C#'))
+    student.abilities.add(a.get(ability='ASP.NET Core'))
+    student.abilities.add(a.get(ability='Xamarin'))
+    student.abilities.add(a.get(ability='GitLab CI/CD'))
+    student.abilities.add(a.get(ability='Amazon Web Services (AWS)'))
     student.abilities.add(a.get(ability='Nginx'))
-    student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='Docker'))
     student.abilities.add(a.get(ability='Scrum'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='jonathan'))
@@ -425,9 +439,8 @@ class AddStudent(TestCase):
     student = Student.objects.create(user=users.get(username='gretter'), address="La Habana",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='53243212', )
+    student.abilities.add(a.get(ability='Diseño'))
     student.abilities.add(a.get(ability='React'))
-    student.abilities.add(a.get(ability='HTML'))
-    student.abilities.add(a.get(ability='CSS'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='JSON'))
     student.abilities.add(a.get(ability='Node.js'))
@@ -449,20 +462,21 @@ class AddStudent(TestCase):
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='lorem'))
 
-    student = Student.objects.create(user=users.get(username='leonardo'), address="Las Villas",
+    student = Student.objects.create(user=users.get(username='leonardo'), address="Santiago de Cuba",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='53122334', )
-    student.abilities.add(a.get(ability='Selenium'))
-    student.abilities.add(a.get(ability='JUnit'))
+    student.abilities.add(a.get(ability='Python'))
+    student.abilities.add(a.get(ability='Django'))
     student.abilities.add(a.get(ability='HTML'))
     student.abilities.add(a.get(ability='CSS'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='Git'))
-    student.abilities.add(a.get(ability='Python'))
+    student.abilities.add(a.get(ability='Nginx'))
+    student.abilities.add(a.get(ability='Postman'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='leonardo'))
 
-    """student = Student.objects.create(user=users.get(username='leandro'), address="Granma",
+    student = Student.objects.create(user=users.get(username='leandro'), address="Granma",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='58976875', )
     student.abilities.add(a.get(ability='Python'))
@@ -471,6 +485,7 @@ class AddStudent(TestCase):
     student.abilities.add(a.get(ability='CSS'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='Nginx'))
     student.abilities.add(a.get(ability='Postman'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='leandro'))
@@ -479,10 +494,10 @@ class AddStudent(TestCase):
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='59876509', )
     student.abilities.add(a.get(ability='Python'))
-    student.abilities.add(a.get(ability='PHP'))
+    student.abilities.add(a.get(ability='Apache'))
     student.abilities.add(a.get(ability='Docker'))
     student.abilities.add(a.get(ability='Django'))
-    student.abilities.add(a.get(ability='Laravel'))
+    student.abilities.add(a.get(ability='Amazon Web Services (AWS)'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='Git'))
     student.abilities.add(a.get(ability='Scrum'))
@@ -493,9 +508,10 @@ class AddStudent(TestCase):
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='55987654', )
     student.abilities.add(a.get(ability='Python'))
-    student.abilities.add(a.get(ability='PHP'))
     student.abilities.add(a.get(ability='Apache'))
+    student.abilities.add(a.get(ability='Docker'))
     student.abilities.add(a.get(ability='Django'))
+    student.abilities.add(a.get(ability='Amazon Web Services (AWS)'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='Git'))
     student.abilities.add(a.get(ability='XML'))
@@ -525,22 +541,38 @@ class AddStudent(TestCase):
     student.abilities.add(a.get(ability='Apache'))
     student.abilities.add(a.get(ability='Docker'))
     student.abilities.add(a.get(ability='Django'))
+    student.abilities.add(a.get(ability='Amazon Web Services (AWS)'))
     student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='Git'))
     student.abilities.add(a.get(ability='Scrum'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
-    my_student_group[0].user_set.add(users.get(username='jennifer'))"""
+    my_student_group[0].user_set.add(users.get(username='jennifer'))
+
+    student = Student.objects.create(user=users.get(username='yoan'), address="La Habana",
+                                     profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
+                                     mobile='53243212', )
+    student.abilities.add(a.get(ability='Diseño'))
+    student.abilities.add(a.get(ability='Angular'))
+    student.abilities.add(a.get(ability='HTML'))
+    student.abilities.add(a.get(ability='CSS'))
+    student.abilities.add(a.get(ability='JavaScript'))
+    student.abilities.add(a.get(ability='JSON'))
+    student.abilities.add(a.get(ability='Node.js'))
+    student.abilities.add(a.get(ability='Scrum'))
+    my_student_group = Group.objects.get_or_create(name='STUDENT')
+    my_student_group[0].user_set.add(users.get(username='yoan'))
 
     student = Student.objects.create(user=users.get(username='juan'), address="La Habana",
                                      profile_pic='profile_pic/Student/personal_correcto_oKXG8gH.png',
                                      mobile='53243212', )
-    student.abilities.add(a.get(ability='Laravel'))
-    student.abilities.add(a.get(ability='PHP'))
+    student.abilities.add(a.get(ability='Diseño'))
+    student.abilities.add(a.get(ability='Vue.js'))
     student.abilities.add(a.get(ability='HTML'))
-    student.abilities.add(a.get(ability='JavaScript'))
     student.abilities.add(a.get(ability='CSS'))
-    student.abilities.add(a.get(ability='Bootstrap'))
-    student.abilities.add(a.get(ability='Git'))
+    student.abilities.add(a.get(ability='JavaScript'))
+    student.abilities.add(a.get(ability='JSON'))
+    student.abilities.add(a.get(ability='Node.js'))
+    student.abilities.add(a.get(ability='Scrum'))
     my_student_group = Group.objects.get_or_create(name='STUDENT')
     my_student_group[0].user_set.add(users.get(username='juan'))
 
@@ -550,42 +582,35 @@ class AddJobOffer(TestCase):
     abilities = Ability.objects.all()
     teachers = Teacher.objects.all()
     job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='La Habana',
-                                                 title='Desarrollador Laravel',
-                                                 teacher=teachers.get(user__username='julio'),
-                                                 date=datetime.now().date())
+                                                 title='Desarrollador full stack Laravel',
+                                                 teacher=teachers.get(user__username='julio'), date=datetime.now().date())
+    job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Bootstrap'))
     job_offer.abilities.add(abilities.get(ability='HTML'))
     job_offer.abilities.add(abilities.get(ability='CSS'))
     job_offer.abilities.add(abilities.get(ability='JavaScript'))
     job_offer.abilities.add(abilities.get(ability='PHP'))
+    job_offer.abilities.add(abilities.get(ability='Sass'))
+    job_offer.abilities.add(abilities.get(ability='Apache'))
     job_offer.abilities.add(abilities.get(ability='Laravel'))
 
     job_offer = ProfessionalOffer.objects.create(modality='Teletrabajo', address='',
                                                  title='Administrador de bases de datos',
-                                                 teacher=teachers.get(user__username='julio'),
-                                                 date=datetime.now().date())
+                                                 teacher=teachers.get(user__username='julio'), date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='SQL'))
     job_offer.abilities.add(abilities.get(ability='MySql'))
     job_offer.abilities.add(abilities.get(ability='PostgreSQL'))
     job_offer.abilities.add(abilities.get(ability='SQLite'))
+    job_offer.abilities.add(abilities.get(ability='Microsoft SQL Server'))
     job_offer.abilities.add(abilities.get(ability='Git'))
+    job_offer.abilities.add(abilities.get(ability='Apache'))
+    job_offer.abilities.add(abilities.get(ability='Nginx'))
+    job_offer.abilities.add(abilities.get(ability='Linux'))
     job_offer.abilities.add(abilities.get(ability='Scrum'))
-
-    job_offer = ProfessionalOffer.objects.create(modality='Teletrabajo', address='',
-                                                 title='Desarrollador backend',
-                                                 teacher=teachers.get(user__username='julio'),
-                                                 date=datetime.now().date())
-    job_offer.abilities.add(abilities.get(ability='Python'))
-    job_offer.abilities.add(abilities.get(ability='SQL'))
-    job_offer.abilities.add(abilities.get(ability='PostgreSQL'))
-    job_offer.abilities.add(abilities.get(ability='Django'))
-    job_offer.abilities.add(abilities.get(ability='Flask'))
-    job_offer.abilities.add(abilities.get(ability='Scrum'))
-    job_offer.abilities.add(abilities.get(ability='Git'))
 
     job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='Las Villas', title='Tester',
-                                                 teacher=teachers.get(user__username='yoan'),
-                                                 description="Tester con alto nivel en Python y Selenium",
+                                                 teacher=teachers.get(user__username='julio'),
+                                                 description="Tester con alto nivel en PHP y Selenium",
                                                  date=datetime.now().date())
     job_offer.abilities.add(abilities.get(ability='Pytest'))
     job_offer.abilities.add(abilities.get(ability='Selenium'))
@@ -593,11 +618,12 @@ class AddJobOffer(TestCase):
     job_offer.abilities.add(abilities.get(ability='HTML'))
     job_offer.abilities.add(abilities.get(ability='JavaScript'))
     job_offer.abilities.add(abilities.get(ability='CSS'))
-    job_offer.abilities.add(abilities.get(ability='Python'))
+    job_offer.abilities.add(abilities.get(ability='PHP'))
+    job_offer.abilities.add(abilities.get(ability='Tester'))
 
-    job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='Matanzas', title='Fullstack',
-                                                 teacher=teachers.get(user__username='yoan'),
-                                                 date=datetime.now().date())
+    job_offer = ProfessionalOffer.objects.create(modality='Presencial', address='Matanzas', title='Tester',
+                                                 teacher=teachers.get(user__username='yoan'), date=datetime.now().date())
+    job_offer.abilities.add(abilities.get(ability='Diseño'))
     job_offer.abilities.add(abilities.get(ability='Angular'))
     job_offer.abilities.add(abilities.get(ability='HTML'))
     job_offer.abilities.add(abilities.get(ability='CSS'))
