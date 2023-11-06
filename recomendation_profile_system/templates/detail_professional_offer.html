@@ -87,9 +87,8 @@
                                     <th>Imagen</th>
                                     <th>Datos del contacto</th>
                                     <th>Habilidades</th>
-                                    <!--
                                     <th>Similitud</th>
-                                    -->
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -115,7 +114,7 @@
                                                 {{ ability }},
                                             {% endfor %}
                                         </td>
-                                        <!--
+
                                         <td>
                                             {% if profile.similarity >= 95 %}
                                                 <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
@@ -129,7 +128,7 @@
                                                 <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
                                             {% endif %}
                                         </td>
-                                        -->
+
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -146,7 +145,15 @@
                                 infoFiltered: '(Buscado de _MAX_ registros total)',
                                 lengthMenu: 'Mostrar _MENU_ registros por página',
                                 zeroRecords: 'No existen registros - lo sentimos'
-                            }
+                            },
+                            order: [[3, 'desc']],
+                            columnDefs: [
+                                {
+                                    target: 3,
+                                    visible: false,
+                                    searchable: false
+                                }
+                            ]
                         });
                     </script>
                 </div>

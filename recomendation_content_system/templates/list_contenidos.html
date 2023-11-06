@@ -34,7 +34,13 @@
                                     <input type="checkbox" name="select" value="{{ job.pk }}" class="checkbox">
                                 </td>
                                 <td>{{ Contenido.titulo }}</td>
-                                <td>{{ Contenido.descripcion }}</td>
+                                <td>
+                                    {% if Contenido.descripcion %}
+                                        {{ Contenido.descripcion }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                                 <td id="td_abilities" class="abilities_text">
                                     {% for ability in Contenido.abilities.all %}
                                         {{ ability }},
@@ -43,7 +49,8 @@
                                 <td>
                                     <!-- Example single danger button -->
                                     <div class="btn-group">
-                                    <a href="{% url 'detail_contenido_to_student' Contenido.id %}" class="btn btn-primary btn-sm" type="button">Mostrar</a>
+                                        <a href="{% url 'detail_contenido_to_student' Contenido.id %}"
+                                           class="btn btn-primary btn-sm" type="button">Mostrar</a>
                                     </div>
                                 </td>
                             </tr>

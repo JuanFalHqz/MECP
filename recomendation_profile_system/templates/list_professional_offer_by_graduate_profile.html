@@ -29,9 +29,7 @@
                                 <th>Dirección</th>
                                 <th>Habilidades</th>
                                 <th>Descripción</th>
-                                <!--
                                 <th>Similitud</th>
-                                -->
                                 <th>Opciones</th>
                             </tr>
                             </thead>
@@ -70,7 +68,6 @@
                                             {{ job.offer.description }}
                                         {% endif %}
                                     </td>
-                                    <!--
                                     <td>
                                         {% if job.similarity >= 95 %}
                                             <span class="float-right badge bg-primary">{{ job.similarity }} %</span>
@@ -84,7 +81,6 @@
                                             <span class="float-right badge bg-danger">{{ job.similarity }} %</span>
                                         {% endif %}
                                     </td>
-                                    -->
                                     <td>
                                         <!-- Example single danger button -->
                                         <div>
@@ -97,21 +93,6 @@
                                 </tr>
                             {% endfor %}
                             </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>Título</th>
-                                <th>Fecha(d/m/a)</th>
-                                <th>Contacto</th>
-                                <th>Modalidad</th>
-                                <th>Dirección</th>
-                                <th>Habilidades</th>
-                                <th>Descripción</th>
-                                <!--
-                                <th>Similitud</th>
-                                -->
-                                <th>Opciones</th>
-                            </tr>
-                            </tfoot>
                         </table>
 
                     </div>
@@ -189,18 +170,6 @@
                                 </tr>
                             {% endfor %}
                             </tbody>
-                            <tfoot>
-                            <tr>
-                                <th>Título</th>
-                                <th>Fecha(d/m/a)</th>
-                                <th>Contacto</th>
-                                <th>Modalidad</th>
-                                <th>Dirección</th>
-                                <th>Habilidades</th>
-                                <th>Descripción</th>
-                                <th>Opciones</th>
-                            </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -218,7 +187,15 @@
                 infoFiltered: '(Buscado de _MAX_ registros total)',
                 lengthMenu: 'Mostrar _MENU_ registros por página',
                 zeroRecords: 'No existen registros - lo sentimos'
-            }
+            },
+            order: [[7, 'desc']],
+            columnDefs: [
+                {
+                    target: 7,
+                    visible: false,
+                    searchable: false
+                }
+            ]
         });
         new DataTable('#example1', {
             language: {

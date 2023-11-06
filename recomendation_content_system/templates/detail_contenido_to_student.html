@@ -76,52 +76,57 @@
                             <table id="example" class="table table-striped mx-auto" style="margin-bottom: 25px;">
                                 <thead>
                                 <tr>
-                                    <th>Imagen</th>
-                                    <th>Descripción</th>
+                                    <th>Título</th>
+                                    <th>Cursos</th>
                                     <th>Habilidades</th>
+                                    <th>Descripción</th>
+                                    <th>Similitud</th>
                                     <!--
                                     <th>Similitud</th>
                                     -->
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for profile in data %}
+                                {% for content in data %}
                                     <tr>
                                         <td>
-                                            <img src="{% static profile.profile.profile_pic %}" width="25" height="25">
-                                        </td>
-                                        <td>
-                                            {{ profile.profile.get_name }}
-                                            {% if profile.profile.mobile %}
-                                                - {{ profile.profile.mobile }}
-                                            {% endif %}
-                                            {% if profile.profile.user.email %}
-                                                - {{ profile.profile.user.email }}
-                                            {% endif %}
-                                            {% if profile.profile.address %}
-                                                - {{ profile.profile.address }}
-                                            {% endif %}
+                                            {{ content.content.titulo }}
                                         </td>
                                         <td class="abilities_text">
-                                            {% for ability in profile.profile.abilities.all %}
+                                            {% for course in content.content.curses.all %}
+                                                {{ course.course_name }},
+                                            {% endfor %}
+
+
+                                        </td>
+                                        <td class="abilities_text">
+                                            {% for ability in content.content.abilities.all %}
                                                 {{ ability }},
                                             {% endfor %}
                                         </td>
-                                        <!--
                                         <td>
-                                            {% if profile.similarity >= 95 %}
-                                                <span class="float-right badge bg-primary">{{ profile.similarity }} %</span>
-                                            {% elif profile.similarity < 95 and profile.similarity > 80 %}
-                                                <span class="float-right badge bg-info">{{ profile.similarity }} %</span>
-                                            {% elif profile.similarity <= 80 and profile.similarity > 60 %}
-                                                <span class="float-right badge bg-success">{{ profile.similarity }} %</span>
-                                            {% elif profile.similarity <= 60 and profile.similarity > 50 %}
-                                                <span class="float-right badge bg-warning">{{ profile.similarity }} %</span>
-                                            {% elif profile.similarity <= 50 %}
-                                                <span class="float-right badge bg-danger">{{ profile.similarity }} %</span>
+                                            {% if content.content.descripcion == "" or content.content.descripcion == Null %}
+                                                -
+                                            {% else %}
+                                                {{ content.content.descripcion }}
+                                            {% endif %}
+
+                                        </td>
+
+                                        <td>
+                                            {% if content.similarity >= 95 %}
+                                                <span class="float-right badge bg-primary">{{ content.similarity }} %</span>
+                                            {% elif content.similarity < 95 and content.similarity > 80 %}
+                                                <span class="float-right badge bg-info">{{ content.similarity }} %</span>
+                                            {% elif content.similarity <= 80 and content.similarity > 60 %}
+                                                <span class="float-right badge bg-success">{{ content.similarity }} %</span>
+                                            {% elif content.similarity <= 60 and profile.similarity > 50 %}
+                                                <span class="float-right badge bg-warning">{{ content.similarity }} %</span>
+                                            {% elif content.similarity <= 50 %}
+                                                <span class="float-right badge bg-danger">{{ content.similarity }} %</span>
                                             {% endif %}
                                         </td>
-                                        -->
+
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -138,7 +143,9 @@
                                 infoFiltered: '(Buscado de _MAX_ registros total)',
                                 lengthMenu: 'Mostrar _MENU_ registros por página',
                                 zeroRecords: 'No existen registros - lo sentimos'
-                            }
+                            },
+                            order: [[4, 'asc']],
+
                         });
                     </script>
                 </div>

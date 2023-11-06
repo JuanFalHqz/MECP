@@ -17,18 +17,16 @@ from student.models import Ability, Student
 
 
 # Clases de Contenidos
-class DetailProfessionalContent(LoginRequiredMixin, TemplateView):
+class DetailContent(LoginRequiredMixin, TemplateView):
     template_name = 'detail_contenido_to_student.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if context['pk']:
-            context['content'] = Contenido.objects.get(id=context['pk'])
-            if is_student(request.user):
-                self.template_name = 'detail_contenido_to_student.html'
-                return self.render_to_response(context)
+            content = Contenido.objects.get(id=context['pk'])
+            context['content'] = content
             #
-            rppjo = ProfessionalContentRecommender(self.request.user.student)
+            rppjo = ContentRecommender(self.request.user.student, content)
             context['data'] = rppjo.get_recommendations_by_content(context['pk'])
             context['umbral'] = rppjo.setting.relevance_umbral
             context['count'] = len(context['data'])
@@ -61,7 +59,7 @@ class Recommendation:
         return cosine_similarity(vector_texto1, vector_texto2)[0][0]
 
 
-class ProfessionalContentRecommender:
+class ContentRecommender:
     """
     Obtener los contenidos rcomendados
     requiere:
@@ -71,12 +69,14 @@ class ProfessionalContentRecommender:
         Recomendacion de contenidos
     """
     all_content = ''
+    content = Contenido()
     setting = 0
     student = Student()
     list_content_to_recommender = 0
 
-    def __init__(self, student):
-        self.all_content = Contenido.objects.all()
+    def __init__(self, student, content):
+        self.content = content
+        self.all_content = Contenido.objects.exclude(id = self.content.id)
         self.setting = Settings.objects.get(pk=student.user.settings.pk)
         student = student
 
@@ -91,11 +91,12 @@ class ProfessionalContentRecommender:
             r = Recommendation()
             # Obtiene las recomendaciones de contenido por el usuario en sesi'on
             for content in self.all_content:
-                similarity = r.get_similarity(self.student.str_meta_data_for_content(), content.str_meta_data())
-                similarities.append({
-                    'content': content,
-                    'similarity': round(similarity * 100, 2)
-                })
+                similarity = r.get_similarity(self.content.str_meta_data(), content.str_meta_data())
+                if similarity * 100 >= self.setting.relevance_umbral:
+                    similarities.append({
+                        'content': content,
+                        'similarity': round(similarity * 100, 2)
+                    })
             # ordenar y tomar según la cantidad
             similarities.sort(key=lambda x: x['similarity'], reverse=True)
             if len(similarities) > self.setting.cant_element_to_show:

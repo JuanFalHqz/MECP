@@ -10,7 +10,7 @@ class Contenido (models.Model):
     content = models.FileField(verbose_name="Archivo", upload_to="media/%Y/%m/%d")
     abilities = models.ManyToManyField(Ability)
     curses = models.ManyToManyField(Course)
-    descripcion = models.TextField(verbose_name="Descripción")
+    descripcion = models.TextField(verbose_name="Descripción", blank=True)
 
     def str_meta_data(self):
         text = ' '
