@@ -25,7 +25,6 @@ class AddAbilities(TestCase):
     abilities.append('Diseño')
     abilities.append('Diseño UI UX')
     abilities.append('SQL')
-    abilities.append('Oracle')
     abilities.append('MySql')
     abilities.append('Microsoft SQL Server')
     abilities.append('PostgreSQL')
@@ -327,7 +326,7 @@ class AddTeacher(TestCase):
 
 
 class AddStudent(TestCase):
-    # 17 Egresados o sus abilidades
+    # 17 Egresados y sus habilidades
     a = Ability.objects.all()
     users = User.objects.all()
     student = Student.objects.create(user=users.get(username='yoel'), address="La Habana",
