@@ -1,12 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, ListView
 
 from recomendation_profile_system.forms import SettingsForm
 from recomendation_profile_system.models import ProfessionalOffer, Settings
-from recomendation_profile_system.view_ import Recommendation
+from recomendation_profile_system.view_ import Recommendation, Url
 
 
 class ListOffertProfessionalByGraduateProfile(LoginRequiredMixin, ListView):
@@ -101,10 +101,12 @@ class UpdateSettingsForGraduate(UpdateView):
     model = Settings
     form_class = SettingsForm
     success_url = reverse_lazy('list_job_offers_by_user_preferences_root')
+    url = Url()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['success_url'] = self.success_url
+        self.url.url = self.request.META.get('HTTP_REFERER')
         return context
 
     def post(self, request, *args, **kwargs):
@@ -119,8 +121,8 @@ class UpdateSettingsForGraduate(UpdateView):
                     form = self.get_form()
                     form.save()
                     messages.success(request, "Ajustes guardados satisfactoriamente.")
-                    response = super().post(request, *args, **kwargs)
-                    return response
+                    super().post(request, *args, **kwargs)
+                    return redirect(self.url.url)
                 else:
                     data['form'] = form
         except Exception as e:

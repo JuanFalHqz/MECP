@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -214,16 +214,22 @@ class Recommendation:
         return cosine_similarity(vector_texto1, vector_texto2)[0][0]
 
 
+class Url:
+    url = ''
+
+
 #   Setting Classes
 class UpdateSettings(LoginRequiredMixin, UpdateView):
     template_name = 'settings.html'
     model = Settings
     form_class = SettingsForm
     success_url = reverse_lazy('list_job_offers_root')
+    url = Url()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['success_url'] = self.success_url
+        self.url.url = self.request.META.get('HTTP_REFERER')
         return context
 
     def post(self, request, *args, **kwargs):
@@ -238,8 +244,8 @@ class UpdateSettings(LoginRequiredMixin, UpdateView):
                     form = self.get_form()
                     form.save()
                     messages.success(request, "Ajustes guardados satisfactoriamente.")
-                    response = super().post(request, *args, **kwargs)
-                    return response
+                    super().post(request, *args, **kwargs)
+                    return redirect(self.url.url)
                 else:
                     data['form'] = form
         except Exception as e:
